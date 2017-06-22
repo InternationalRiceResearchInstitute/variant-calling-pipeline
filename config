@@ -1,0 +1,23 @@
+[DIRECTORIES]
+input_dir=/home/shao/irri-bioinformatics/3kRG/irri
+reference_dir=/home/shao/irri-bioinformatics/3kRG/ref_genome/reference_genome.fa
+software_dir=/home/shao/irri-bioinformatics/3kRG/software
+output_dir=/home/shao/user.name/scratch2/output
+analysis_dir=/home/shao/user.name/scratch1/analysis
+scripts_dir=/home/shao/user.name/scratch1/scripts
+tmp_dir=/home/shao/user.name/scratch2/tmp
+disk=10
+
+[SOFTWARE]
+picard=/home/shao/irri-bioinformatics/3kRG/software/picard-tools-1.119
+gatk=/home/shao/irri-bioinformatics/3kRG/software/GenomeAnalysisTK-3.2-2/GenomeAnalysisTK.jar
+samtools=samtools faidx
+bwa=bwa
+bgzip=bgzip
+tabix=tabix
+
+[SLURM PARAMETERS]
+email=username@irri.org
+username=user.name
+partition=batch
+server=[tux,duke]
