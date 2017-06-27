@@ -9,24 +9,22 @@ params = CreateFormatReferenceParams()
 attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
 for line in open(params.fp):
-	for index, items in enumerate(attributes):
-		if re.search(items, line):
-			if re.findall(r'reference_dir', line):
-				params.reference_dir = line.split('=')[-1].rstrip()
-				params.dictionary_out = params.reference_dir
-				params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
+	if re.findall(r'reference_dir', line):
+		params.reference_dir = line.split('=')[-1].rstrip()
+		params.dictionary_out = params.reference_dir
+		params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
 
-			elif re.findall(r'scripts_dir', line):
-				params.scripts_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'scripts_dir', line):
+		params.scripts_dir = line.split('=')[-1].rstrip()
 
-			elif re.findall(r'picard', line):
-				params.picard = line.split('=')[-1].rstrip()
+	elif re.findall(r'picard', line):
+		params.picard = line.split('=')[-1].rstrip()
 
-			elif re.findall(r'email', line):
-				params.email = line.split('=')[-1].rstrip()
+	elif re.findall(r'email', line):
+		params.email = line.split('=')[-1].rstrip()
 
-			elif re.findall(r'partition', line):
-				params.partition = line.split('=')[-1].rstrip()
+	elif re.findall(r'partition', line):
+		params.partition = line.split('=')[-1].rstrip()
 
 for line in open(params.fp):
 	path = params.scripts_dir
@@ -49,8 +47,8 @@ for line in open(params.fp):
 	slurm.write("formatted=1\n")
 	slurm.write("\n")
 
-	slurm.write("module load samtools/1.0-intel\n")
-	slurm.write("module load bwa/0.7.10-intel\n")
+	slurm.write("module load samtools/1.0\n")
+	slurm.write("module load bwa/0.7.10\n")
 	slurm.write("module load jdk\n")
 	slurm.write("\n")
 
