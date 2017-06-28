@@ -5,12 +5,15 @@ import os.path
 from classes import CreateBAMProcessingParams
 from classes import writeFile
 
+# get the genome file
 file = sys.argv[1]
 disk = sys.argv[2]
 
+# get the parameters in the class CreateBAMProcessingParams
 params = CreateBAMProcessingParams()
 attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
+# reads the config file and get the respective values for each
 for line in open(params.fp):
 	if re.findall(r'analysis_dir', line):
 		params.analysis_dir = line.split('=')[-1].rstrip()
@@ -42,46 +45,60 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
+	elif re.findall(r'cpu', line):
+		params.cpu = line.split('=')[-1].rstrip()
+
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
+# reads the file containing the genome
 for line in open(file):
 	line = line.split(":")
 	genome = line[0]
+
+	# get its half for job array limit
 	count = int(line[1]) / 2
 
+	# create a directory for each genome
 	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	
+	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk
-	genomeFile = "submit_sam2bam_slurm.sh"
+	slurm_file = "submit_sam2bam_slurm.sh"
 
-	script = open(os.path.join(path, genomeFile), "w")
-	path = params.analysis_dir + "/" + disk + "/" + genome
-	genomeFile = genome + "-sam2bam.sh"
-	writeFile(script, os.path.join(path, genomeFile))
+	output_path = params.analysis_dir + "/" + disk + "/" + genome
+	sambam_file = genome + "-sam2bam.sh"
+
+	# creates a submit shell script between job submission
+	# to prevent timeout
+	script = open(os.path.join(path, slurm_file), "w")
+	writeFile(script, os.path.join(output_path, sambam_file))
 	script.close()
 
-	sam_bam = open(os.path.join(path, genomeFile), "w")
-	sam_bam.write("#!/bin/bash\n")
-	sam_bam.write("\n")
+	# creates slurm script
+	sambam = open(os.path.join(path, sambam_file), "w")
+	sambam.write("#!/bin/bash\n")
+	sambam.write("\n")
 
-	sam_bam.write("#SBATCH -J " + genome + "\n")
-	sam_bam.write("#SBATCH -o " + genome + "-sam2bam.%j.out\n")
-	sam_bam.write("#SBATCH --cpus-per-task=6\n")
-	sam_bam.write("#SBATCH --array=1-" + str(count) + "\n")
-	sam_bam.write("#SBATCH --partition=" + partition + "\n")
-	sam_bam.write("#SBATCH -e -" + genome + "sam2bam.%j.error\n")
-	sam_bam.write("#SBATCH --mail-user=" + email + "\n")
-	sam_bam.write("#SBATCH --mail-type=begin\n")
-	sam_bam.write("#SBATCH --mail-type=end\n")
-	sam_bam.write("#SBATCH --requeue\n")
-	sam_bam.write("\n")
+	sambam.write("#SBATCH -J " + genome + "\n")
+	sambam.write("#SBATCH -o " + genome + "-sam2bam.%j.out\n")
+	sambam.write("#SBATCH -c " + params.cpu + "\n")
+	sambam.write("#SBATCH --array=1-" + str(count) + "\n")
+	sambam.write("#SBATCH --partition=" + params.partition + "\n")
+	sambam.write("#SBATCH -e -" + genome + "sam2bam.%j.error\n")
+	sambam.write("#SBATCH --mail-user=" + params.email + "\n")
+	sambam.write("#SBATCH --mail-type=begin\n")
+	sambam.write("#SBATCH --mail-type=end\n")
+	sambam.write("#SBATCH --requeue\n")
+	sambam.write("\n")
 
-	# sam_bam.write("module load python\n")
-	sam_bam.write("module load jdk\n")
-	sam_bam.write("filename=`find " + params.output_dir + "/" + genome + " -name \"*.sam\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
-	sam_bam.write("\n")
+	# loads the module to be used
+	sambam.write("module load jdk\n")
+	# sambam.write("module load python\n")
+	sambam.write("\n")
 
-	sam_bam.write("python " + params.scripts_dir + "/sam2bam.py -s \$filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk +" -j " + params.jvm + " -t " + params.tmp_dir + "\n")
-	sam_bam.write("mv " + genome + "-fq2sam.*.error " + genome + "-fq2sam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
-	sam_bam.close()
+	# get the first pair of a fastq file and assign for use
+	sambam.write("filename=`find " + params.output_dir + "/" + genome + " -name \"*.sam\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
+	sambam.write("python " + params.scripts_dir + "/sam2bam.py -s \$filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk +" -j " + params.jvm + " -t " + params.tmp_dir + "\n")
+	sambam.write("mv " + genome + "-fq2sam.*.error " + genome + "-fq2sam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
+	sambam.close()

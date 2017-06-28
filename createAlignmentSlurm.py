@@ -5,12 +5,15 @@ import os.path
 from classes import CreateAlignmentParams
 from classes import writeFile
 
-file_input = sys.argv[1]
+# get the genome file
+file = sys.argv[1]
 disk = sys.argv[2]
 
+# get the parameters in the class CreateAlignmentParams
 params = CreateAlignmentParams()
 attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
+# reads the config file and get the respective values for each
 for line in open(params.fp):
 	if re.findall(r'analysis_dir', line):
 		params.analysis_dir = line.split('=')[-1].rstrip()
@@ -30,46 +33,61 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'partition', line):
-		params.partition = line.split('=')[-1].rstrip()
+	elif re.findall(r'bwa', line):
+		params.bwa = line.split('=')[-1].rstrip()
 
-for line in open(file_input):
+	elif re.findall(r'cpu', line):
+		params.cpu = line.split('=')[-1].rstrip()
+
+# reads the file containing the genome
+for line in open(file):
 	line = line.split(":")
 	genome = line[0]
+
+	# get its half for job array limit
 	count = int(line[1]) / 2
 
+	# create a directory for each genome
 	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
 	os.makedirs(params.output_dir + "/" + genome)
 	
+	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk
-	genomeFile = "submit_slurm.sh"
+	slurm_file = "submit_slurm.sh"
 
-	script = open(os.path.join(path, genomeFile), "w")
-	path = params.analysis_dir + "/" + disk + "/" + genome
-	genomeFile = genome + "-fq2sam.sh"
-	writeFile(script, os.path.join(path, genomeFile))
+	output_path = params.analysis_dir + "/" + disk + "/" + genome
+	fqsam_file = genome + "-fq2sam.sh"
+
+	# creates a submit shell script between job submission
+	# to prevent timeout
+	script = open(os.path.join(path, slurm_file), "w")
+	writeFile(script, os.path.join(output_path, fqsam_file))
 	script.close()
 
-	fq_sam = open(os.path.join(path, genomeFile), "w")
-	fq_sam.write("#!/bin/bash\n")
-	fq_sam.write("\n")
+	# creates slurm script
+	fqsam = open(os.path.join(path, fqsam_file), "w")
+	fqsam.write("#!/bin/bash\n")
+	fqsam.write("\n")
 
-	fq_sam.write("#SBATCH -J " + genome + "-fq2sam\n")
-	fq_sam.write("#SBATCH -o " + genome + "-fq2sam.%j.out\n")
-	fq_sam.write("#SBATCH --cpus-per-task=8\n")
-	fq_sam.write("#SBATCH --array=1-" + str(count) + "\n")
-	fq_sam.write("#SBATCH --partition=" + partition + "\n")
-	fq_sam.write("#SBATCH -e " + genome + "-fq2sam.%j.error\n")
-	fq_sam.write("#SBATCH --mail-user=" + email + "\n")
-	fq_sam.write("#SBATCH --mail-type=begin\n")
-	fq_sam.write("#SBATCH --mail-type=end\n")
-	fq_sam.write("#SBATCH --requeue\n")
-	fq_sam.write("\n")
+	fqsam.write("#SBATCH -J " + genome + "-fq2sam\n")
+	fqsam.write("#SBATCH -o " + genome + "-fq2sam.%j.out\n")
+	fqsam.write("#SBATCH -c " + params.cpu + "\n")
+	fqsam.write("#SBATCH --array=1-" + str(count) + "\n")
+	fqsam.write("#SBATCH --partition=" + params.partition + "\n")
+	fqsam.write("#SBATCH -e " + genome + "-fq2sam.%j.error\n")
+	fqsam.write("#SBATCH --mail-user=" + params.email + "\n")
+	fqsam.write("#SBATCH --mail-type=begin\n")
+	fqsam.write("#SBATCH --mail-type=end\n")
+	fqsam.write("#SBATCH --requeue\n")
+	fqsam.write("\n")
 
-	fq_sam.write("module load bwa/0.7.10\n")
-	# fq_sam.write("module load python/2.7.11\n")
-	fq_sam.write("filename=`find " + params.input_dir + "/" + genome + " -name \"*1.fastq.gz\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
-	fq_sam.write("\n")
+	# loads the module to be used
+	fqsam.write("module load bwa/" + params.bwa + "\n")
+	# fqsam.write("module load python/2.7.11\n")
+	fqsam.write("\n")
 
-	fq_sam.write("python " + params.scripts_dir + "/fq2sam.py -r " + params.reference_dir + " -p \$filename -o " + params.output_dir + " -t \$SLURM_CPUS_PER_TASK\n")
-	fq_sam.close()
+	# get the first pair of a fastq file and assign for use
+	fqsam.write("filename=`find " + params.input_dir + "/" + genome + " -name \"*1.fastq.gz\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
+	fqsam.write("python " + params.scripts_dir + "/fq2sam.py -r " + params.reference_dir + " -p \$filename -o " + params.output_dir + " -t \$SLURM_CPUS_PER_TASK\n")
+	
+	fqsam.close()

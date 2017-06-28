@@ -20,6 +20,8 @@ class CreateAlignmentParams():
 	output_dir = ''
 	email = ''
 	partition = ''
+	bwa = ''
+	cpu = ''
 	fp = 'config'
 
 class CreateBAMProcessingParams():
@@ -33,6 +35,7 @@ class CreateBAMProcessingParams():
 	picard = ''
 	gatk = ''
 	email = ''
+	cpu = ''
 	partition = ''
 	jvm = '8g'
 	fp = 'config'
@@ -44,6 +47,8 @@ class CreateMergeBAMParams():
 	scripts_dir = ''
 	output_dir = ''
 	email = ''
+	cpu = ''
+	samtools = ''
 	partition = ''
 	fp = 'config'
 
@@ -59,6 +64,9 @@ class CreateVariantCallingParams():
 	bgzip = ''
 	tabix = ''
 	email = ''
+	cpu = ''
+	samtools = ''
+	htslib = ''
 	partition = ''
 	fp = 'config'
 
