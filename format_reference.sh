@@ -8,7 +8,7 @@
 #SBATCH -o format_reference.%j.out
 #SBATCH -e format_reference.%j.error
 #SBATCH --partition=batch
-#SBATCH --mail-user=rosechellejoyoraa@gmail.com
+#SBATCH --mail-user=jppascual2@up.edu.ph
 #SBATCH --mail-type=ALL
 #SBATCH --requeue
 
@@ -22,8 +22,8 @@ conf=`grep -n "samtools" config`
 samtools_faidx=${conf##*=}
 dictionary_output=${reference/.fa/.dict}
 
-module load bwa/0.7.10-intel
-module load samtools/1.0-intel
+module load bwa/0.7.10
+module load samtools/1.0
 module load jdk
 
 #Index reference (bwa)

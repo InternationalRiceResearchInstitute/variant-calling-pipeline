@@ -5,7 +5,7 @@ import os.path
 from classes import CreateAlignmentParams
 from classes import writeFile
 
-file = sys.argv[1]
+file_input = sys.argv[1]
 disk = sys.argv[2]
 
 params = CreateAlignmentParams()
@@ -33,13 +33,13 @@ for line in open(params.fp):
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
-for line in open(file):
+for line in open(file_input):
 	line = line.split(":")
 	genome = line[0]
 	count = int(line[1]) / 2
 
-	# os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
-	# os.makedirs(params.output_dir + "/" + genome)
+	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
+	os.makedirs(params.output_dir + "/" + genome)
 	
 	path = params.analysis_dir + "/" + disk
 	genomeFile = "submit_slurm.sh"
@@ -58,16 +58,16 @@ for line in open(file):
 	fq_sam.write("#SBATCH -o " + genome + "-fq2sam.%j.out\n")
 	fq_sam.write("#SBATCH --cpus-per-task=8\n")
 	fq_sam.write("#SBATCH --array=1-" + str(count) + "\n")
-	fq_sam.write("#SBATCH --partition=$partition\n")
+	fq_sam.write("#SBATCH --partition=" + partition + "\n")
 	fq_sam.write("#SBATCH -e " + genome + "-fq2sam.%j.error\n")
-	fq_sam.write("#SBATCH --mail-user=$email\n")
+	fq_sam.write("#SBATCH --mail-user=" + email + "\n")
 	fq_sam.write("#SBATCH --mail-type=begin\n")
 	fq_sam.write("#SBATCH --mail-type=end\n")
 	fq_sam.write("#SBATCH --requeue\n")
 	fq_sam.write("\n")
 
-	fq_sam.write("module load bwa/0.7.10-intel\n")
-	fq_sam.write("module load python/2.7.11\n")
+	fq_sam.write("module load bwa/0.7.10\n")
+	# fq_sam.write("module load python/2.7.11\n")
 	fq_sam.write("filename=`find " + params.input_dir + "/" + genome + " -name \"*1.fastq.gz\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
 	fq_sam.write("\n")
 

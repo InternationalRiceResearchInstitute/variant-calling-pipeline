@@ -5,20 +5,23 @@ conf=`grep -n "disk" config`
 disk=${conf##*=}
 conf=`grep -n "input_dir" config`
 input_dir=${conf##*=}
+conf=`grep -n "scripts_dir" config`
+scripts_dir=${conf##*=}
 filename="input.info"
 inc_pairs=false
 
 mkdir $analysis_dir/$disk
+
 #check if read pairs are complete
 while read -r line		#read each line
 do
 	IFS=':' read -ra info <<< "$line" #split, get each genome
 	for pair in `ls $input_dir/$info`
 		do
-			if [[ $pair == *"1.fq.gz"* ]]
+			if [[ $pair == *"1.fastq.gz"* ]]
 			then
   				pair2="$input_dir/$info/${pair/1.fastq.gz/2.fastq.gz}"
-			elif [[ $pair == *"2.fq.gz"* ]]
+			elif [[ $pair == *"2.fastq.gz"* ]]
 			then
 				pair2="$input_dir/$info/${pair/2.fastq.gz/1.fastq.gz}"	
 			fi 
@@ -30,7 +33,6 @@ do
 			fi
 		done
 done < "$filename"
-
 if [ "$inc_pairs" = true ]	#if there are incomplete pairs
 then
 	exit $			#exit program

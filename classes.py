@@ -62,8 +62,8 @@ class CreateVariantCallingParams():
 	partition = ''
 	fp = 'config'
 
-def writeFile(script):
+def writeFile(script, output):
 	script.write("#!/bin/bash\n")
 	script.write("\n")
-	script.write("sbatch $outfile\n")
+	script.write("sbatch " + output + "\n")
 	script.write("sleep 10m\n")

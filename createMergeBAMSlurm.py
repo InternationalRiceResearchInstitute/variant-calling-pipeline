@@ -53,15 +53,15 @@ for line in open(file):
 	merge_bam.write("#SBATCH -J " + genome + "\n")
 	merge_bam.write("#SBATCH -o " + genome + "-mergebam.%j.out\n")
 	merge_bam.write("#SBATCH --cpus-per-task=6\n")
-	merge_bam.write("#SBATCH --partition=$partition\n")
+	merge_bam.write("#SBATCH --partition=" + partition + "\n")
 	merge_bam.write("#SBATCH -e " + genome + "-mergebam.%j.error\n")
-	merge_bam.write("#SBATCH --mail-user=$email\n")
+	merge_bam.write("#SBATCH --mail-user=" + email + "\n")
 	merge_bam.write("#SBATCH --mail-type=begin\n")
 	merge_bam.write("#SBATCH --mail-type=end\n")
 	merge_bam.write("#SBATCH --requeue\n")
 	merge_bam.write("\n")
 
-	merge_bam.write("module samtools/1.0-intel\n")
+	merge_bam.write("module samtools/1.0\n")
 	merge_bam.write("\n")
 
 	merge_bam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + genome + "\n")
