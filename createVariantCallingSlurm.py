@@ -51,6 +51,12 @@ for line in open(params.fp):
 	elif re.findall(r'cpu', line):
 		params.cpu = line.split('=')[-1].rstrip()
 
+	elif re.findall(r'samtools', line):
+		params.samtools = line.split('=')[-1].rstrip()
+
+	elif re.findall(r'htslib', line):
+		params.htslib = line.split('=')[-1].rstrip()
+
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
