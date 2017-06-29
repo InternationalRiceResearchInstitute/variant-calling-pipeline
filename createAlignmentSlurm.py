@@ -33,9 +33,6 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'bwas=', line):
-		params.bwa = line.split('=')[-1].rstrip()
-
 # reads the file containing the genome
 for line in open(file_input):
 	line = line.split(":")
@@ -53,7 +50,7 @@ for line in open(file_input):
 	slurm_file = "submit_slurm.sh"
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	fqsam_file = genome + "-fq2sam.sh"
+	fqsam_file = genome + "-fq2sam.slurm"
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
@@ -62,13 +59,13 @@ for line in open(file_input):
 	script.close()
 
 	# creates slurm script
-	fqsam = open(os.path.join(path, fqsam_file), "w")
+	fqsam = open(os.path.join(output_path, fqsam_file), "w")
 	fqsam.write("#!/bin/bash\n")
 	fqsam.write("\n")
 
 	fqsam.write("#SBATCH -J " + genome + "-fq2sam\n")
 	fqsam.write("#SBATCH -o " + genome + "-fq2sam.%j.out\n")
-	fqsam.write("#SBATCH -c " + str(params.cpu) + "\n")
+	fqsam.write("#SBATCH -c 8\n")
 	fqsam.write("#SBATCH --array=1-" + str(count) + "\n")
 	fqsam.write("#SBATCH --partition=" + params.partition + "\n")
 	fqsam.write("#SBATCH -e " + genome + "-fq2sam.%j.error\n")
@@ -79,7 +76,7 @@ for line in open(file_input):
 	fqsam.write("\n")
 
 	# loads the module to be used
-	fqsam.write("module load bwa/" + params.bwa + "\n")
+	fqsam.write("module load bwa/0.7.10\n")
 	# fqsam.write("module load python/2.7.11\n")
 	fqsam.write("\n")
 

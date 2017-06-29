@@ -48,12 +48,6 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'samtool=', line):
-		params.samtools = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'htslib', line):
-		params.htslib = line.split('=')[-1].rstrip()
-
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
@@ -67,7 +61,7 @@ for line in open(file):
 	slurm_file = "submit_bam2vcf_slurm.sh"
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	bamvcf_File = genome + "-bam2vcf.sh"
+	bamvcf_File = genome + "-bam2vcf.slurm"
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
@@ -76,13 +70,13 @@ for line in open(file):
 	script.close()
 
 	# creates slurm script
-	bamvcf = open(os.path.join(path, bamvcfFile), "w")
+	bamvcf = open(os.path.join(output_path, bamvcf_file), "w")
 	bamvcf.write("#!/bin/bash\n")
 	bamvcf.write("\n")
 
 	bamvcf.write("#SBATCH -J " + genome + "-bam2vcf\n")
 	bamvcf.write("#SBATCH -o " + genome + "-bam2vcf.%j.out\n")
-	bamvcf.write("#SBATCH -c " + params.cpu + "\n")
+	bamvcf.write("#SBATCH -c 8\n")
 	bamvcf.write("#SBATCH --partition=" + params.partition + "\n")
 	bamvcf.write("#SBATCH -e " + genome + "-bam2vcf.%j.error\n")
 	bamvcf.write("#SBATCH --mail-user=" + params.email + "\n")
@@ -92,8 +86,8 @@ for line in open(file):
 
 	# loads the modules
 	bamvcf.write("module load jdk\n")
-	bamvcf.write("module load samtools/" + params.samtools + "\n")
-	bamvcf.write("module load htslib/" + params.htslib + "\n")
+	bamvcf.write("module load samtools/1.0\n")
+	bamvcf.write("module load htslib/1.0\n")
 	# bamvcf.write("module load python/2.7.11\n")
 	bamvcf.write("\n")
 

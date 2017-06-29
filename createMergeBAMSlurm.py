@@ -33,9 +33,6 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'samtool=', line):
-		params.samtools = line.split('=')[-1].rstrip()
-
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
@@ -49,7 +46,7 @@ for line in open(file):
 	slurm_file = "submit_mergebam_slurm.sh"
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	mergebam_file = genome + "-mergebam.sh"
+	mergebam_file = genome + "-mergebam.slurm"
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
@@ -58,13 +55,13 @@ for line in open(file):
 	script.close()
 
 	# creates slurm script
-	mergebam = open(os.path.join(path, mergebam_file), "w")
+	mergebam = open(os.path.join(output_path, mergebam_file), "w")
 	mergebam.write("#!/bin/bash\n")
 	mergebam.write("\n")
 
 	mergebam.write("#SBATCH -J " + genome + "\n")
 	mergebam.write("#SBATCH -o " + genome + "-mergebam.%j.out\n")
-	mergebam.write("#SBATCH -c " + params.cpu + "\n")
+	mergebam.write("#SBATCH -c 6\n")
 	mergebam.write("#SBATCH --partition=" + params.partition + "\n")
 	mergebam.write("#SBATCH -e " + genome + "-mergebam.%j.error\n")
 	mergebam.write("#SBATCH --mail-user=" + params.email + "\n")
@@ -74,10 +71,10 @@ for line in open(file):
 	mergebam.write("\n")
 
 	# loads the module to be used
-	mergebam.write("module samtools/" + params.samtools + "\n")
+	mergebam.write("module samtools/1.0\n")
 	mergebam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + genome + "\n")
+	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + " " + genome + "\n")
 	mergebam.write("mv " + genome + "-sam2bam*.error " + genome + "-sam2bam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	mergebam.close()

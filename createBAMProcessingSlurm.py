@@ -64,7 +64,7 @@ for line in open(file):
 	slurm_file = "submit_sam2bam_slurm.sh"
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	sambam_file = genome + "-sam2bam.sh"
+	sambam_file = genome + "-sam2bam.slurm"
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
@@ -73,13 +73,13 @@ for line in open(file):
 	script.close()
 
 	# creates slurm script
-	sambam = open(os.path.join(path, sambam_file), "w")
+	sambam = open(os.path.join(output_path, sambam_file), "w")
 	sambam.write("#!/bin/bash\n")
 	sambam.write("\n")
 
 	sambam.write("#SBATCH -J " + genome + "\n")
 	sambam.write("#SBATCH -o " + genome + "-sam2bam.%j.out\n")
-	sambam.write("#SBATCH -c " + params.cpu + "\n")
+	sambam.write("#SBATCH -c 6\n")
 	sambam.write("#SBATCH --array=1-" + str(count) + "\n")
 	sambam.write("#SBATCH --partition=" + params.partition + "\n")
 	sambam.write("#SBATCH -e -" + genome + "sam2bam.%j.error\n")
