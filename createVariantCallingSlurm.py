@@ -48,10 +48,7 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'cpu', line):
-		params.cpu = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'samtools', line):
+	elif re.findall(r'samtool=', line):
 		params.samtools = line.split('=')[-1].rstrip()
 
 	elif re.findall(r'htslib', line):

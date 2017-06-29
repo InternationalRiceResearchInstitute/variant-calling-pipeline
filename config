@@ -23,8 +23,8 @@ partition=batch
 server=[tux,duke]
 
 [MODULES]
-bwa=0.7.10
-samtools=1.0
+bwas=0.7.10
+samtool=1.0
 htslib=1.0
 vcftools=0.1.15
 bamutil=1.0.13

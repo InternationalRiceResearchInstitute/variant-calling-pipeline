@@ -6,7 +6,7 @@ from classes import CreateAlignmentParams
 from classes import writeFile
 
 # get the genome file
-file = sys.argv[1]
+file_input = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateAlignmentParams
@@ -33,14 +33,11 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'bwa', line):
+	elif re.findall(r'bwas=', line):
 		params.bwa = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'cpu', line):
-		params.cpu = line.split('=')[-1].rstrip()
-
 # reads the file containing the genome
-for line in open(file):
+for line in open(file_input):
 	line = line.split(":")
 	genome = line[0]
 
@@ -71,7 +68,7 @@ for line in open(file):
 
 	fqsam.write("#SBATCH -J " + genome + "-fq2sam\n")
 	fqsam.write("#SBATCH -o " + genome + "-fq2sam.%j.out\n")
-	fqsam.write("#SBATCH -c " + params.cpu + "\n")
+	fqsam.write("#SBATCH -c " + str(params.cpu) + "\n")
 	fqsam.write("#SBATCH --array=1-" + str(count) + "\n")
 	fqsam.write("#SBATCH --partition=" + params.partition + "\n")
 	fqsam.write("#SBATCH -e " + genome + "-fq2sam.%j.error\n")
