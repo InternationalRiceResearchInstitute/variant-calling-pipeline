@@ -2,11 +2,11 @@
 input_dir=/home/jppascual/input/fastq_input
 reference_dir=/home/jppascual/ref_genome/IRGSP-1.0_chr01.fa
 software_dir=/home/jppascual/software
-output_dir=/home/jppascual/scratch1/output3
+output_dir=/home/jppascual/scratch1/output
 analysis_dir=/home/jppascual/analysis
 scripts_dir=/home/jppascual/scripts/variant-calling-pipeline
 tmp_dir=/home/jppascual/scratch1/tmp
-disk=test3
+disk=test
 
 [SOFTWARE]
 picard=/home/jppascual/software/picard-tools-1.119

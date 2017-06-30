@@ -47,18 +47,23 @@ for line in open(file):
 	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk
 	slurm_file = "submit_mergebam_slurm.sh"
+	exec_file = os.path.join(path, slurm_file)
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	mergebam_file = genome + "-mergebam.sh"
+	mergebam_file = genome + "-mergebam.slurm"
+	output_file = os.path.join(output_path, mergebam_file)
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
-	script = open(os.path.join(path, slurm_file), "w")
-	writeFile(script, os.path.join(output_path, mergebam_file))
+	script = open(exec_file, "w")
+	script.write("#!/bin/bash\n")
+	script.write("\n")
+	script.write("sbatch " + output_file + "\n")
+	script.write("sleep 10m\n")
 	script.close()
 
 	# creates slurm script
-	mergebam = open(os.path.join(path, mergebam_file), "w")
+	mergebam = open(output_file, "w")
 	mergebam.write("#!/bin/bash\n")
 	mergebam.write("\n")
 

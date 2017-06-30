@@ -31,6 +31,6 @@ while 1:
 		if not line2: break
 
 		# writes in a file
-		file.write(line + ": " + line2 + "\n")
+		file.write(line + ":" + line2 + "\n")
 
 file.close()

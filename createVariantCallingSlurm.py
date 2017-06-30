@@ -65,18 +65,23 @@ for line in open(file):
 	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk
 	slurm_file = "submit_bam2vcf_slurm.sh"
+	exec_file = os.path.join(path, slurm_file)
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	bamvcf_File = genome + "-bam2vcf.sh"
+	bamvcf_file = genome + "-bam2vcf.slurm"
+	output_file = os.path.join(output_path, bamvcf_file)
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
-	script = open(os.path.join(path, slurm_file), "w")
-	writeFile(script, os.path.join(output_path, bamvcf_file))
+	script = open(exec_file, "w")
+	script.write("#!/bin/bash\n")
+	script.write("\n")
+	script.write("sbatch " + output_file + "\n")
+	script.write("sleep 10m\n")
 	script.close()
 
 	# creates slurm script
-	bamvcf = open(os.path.join(path, bamvcfFile), "w")
+	bamvcf = open(output_file, "w")
 	bamvcf.write("#!/bin/bash\n")
 	bamvcf.write("\n")
 
