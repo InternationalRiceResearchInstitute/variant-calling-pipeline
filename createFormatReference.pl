@@ -41,7 +41,7 @@ while(my $line=<$info>){
 }
 close($fp);
 #create "format.sh" to format reference
-my $outfile="$scripts_dir/format.sh";
+my $outfile="$scripts_dir/formats.sh";
 
 open OUT, ">", $outfile or die $!;
 print OUT "#!/bin/bash\n";

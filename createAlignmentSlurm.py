@@ -42,8 +42,8 @@ for line in open(file_input):
 	count = int(line[1]) / 2
 
 	# create a directory for each genome
-	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
-	os.makedirs(params.output_dir + "/" + genome)
+	#os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
+	#os.makedirs(params.output_dir + "/" + genome)
 	
 	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk

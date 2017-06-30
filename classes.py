@@ -23,6 +23,7 @@ class CreateAlignmentParams():
 	bwa = ''
 	cpu = '8'
 	fp = 'config'
+	sudo_dir = ''
 
 class CreateBAMProcessingParams():
 	analysis_dir = ''

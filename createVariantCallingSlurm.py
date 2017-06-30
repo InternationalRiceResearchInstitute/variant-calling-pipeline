@@ -61,7 +61,7 @@ for line in open(file):
 	slurm_file = "submit_bam2vcf_slurm.sh"
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
-	bamvcf_File = genome + "-bam2vcf.slurm"
+	bamvcf_file = genome + "-bam2vcf.slurm"
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
