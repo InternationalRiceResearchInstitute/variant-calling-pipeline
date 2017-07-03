@@ -6,7 +6,7 @@ from classes import CreateVariantCallingParams
 from classes import writeFile
 
 # get the genome file
-file = sys.argv[1]
+input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateVariantCallingParams
@@ -58,7 +58,7 @@ for line in open(params.fp):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
-for line in open(file):
+for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
 
@@ -103,6 +103,6 @@ for line in open(file):
 	bamvcf.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/" +  genome + ".merged.bam -r " + params.reference_dir + "r -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
+	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/" +  genome + ".merged.bam -r " + params.reference_dir + " -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
 	bamvcf.write("mv " + genome + "-mergebam.*.error " + genome + "-mergebam.*.out " + genome + "-bam2vcf.*.error " + genome + "-bam2vcf.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	bamvcf.close()

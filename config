@@ -12,7 +12,6 @@ disk=test
 picard=/home/jppascual/software/picard-tools-1.119
 gatk=/home/jppascual/software/GenomeAnalysisTK-3.2-2/GenomeAnalysisTK.jar
 samtools=samtools faidx
-bwa=bwa
 bgzip=bgzip
 tabix=tabix
 

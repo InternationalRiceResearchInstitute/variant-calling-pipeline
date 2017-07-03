@@ -6,7 +6,7 @@ from classes import CreateMergeBAMParams
 from classes import writeFile
 
 # get the genome file
-file = sys.argv[1]
+input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateMergeBAMParams
@@ -40,7 +40,7 @@ for line in open(params.fp):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
-for line in open(file):
+for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
 
@@ -79,10 +79,10 @@ for line in open(file):
 	mergebam.write("\n")
 
 	# loads the module to be used
-	mergebam.write("module samtools/" + params.samtools + "\n")
+	mergebam.write("module load samtools/" + params.samtools + "\n")
 	mergebam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + genome + "\n")
+	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + " " + genome + "\n")
 	mergebam.write("mv " + genome + "-sam2bam*.error " + genome + "-sam2bam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	mergebam.close()

@@ -38,7 +38,7 @@ fi
 perl createFormatReference.pl
 format=$(sbatch format.sh)		#format reference
 
-./createAlignmentSlurm.py  $filename $disk		#create slurm scripts for each step
+./createAlignmentSlurm.pl  $filename $disk		#create slurm scripts for each step
 ./createBAMProcessingSlurm.py $filename $disk
 ./createMergeBAMSlurm.py $filename $disk
 ./createVariantCallingSlurm.py $filename $disk

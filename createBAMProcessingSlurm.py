@@ -6,7 +6,7 @@ from classes import CreateBAMProcessingParams
 from classes import writeFile
 
 # get the genome file
-file = sys.argv[1]
+input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateBAMProcessingParams
@@ -49,7 +49,7 @@ for line in open(params.fp):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
-for line in open(file):
+for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
 
@@ -87,7 +87,7 @@ for line in open(file):
 	sambam.write("#SBATCH -c " + params.cpu + "\n")
 	sambam.write("#SBATCH --array=1-" + str(count) + "\n")
 	sambam.write("#SBATCH --partition=" + params.partition + "\n")
-	sambam.write("#SBATCH -e -" + genome + "sam2bam.%j.error\n")
+	sambam.write("#SBATCH -e " + genome + "sam2bam.%j.error\n")
 	sambam.write("#SBATCH --mail-user=" + params.email + "\n")
 	sambam.write("#SBATCH --mail-type=begin\n")
 	sambam.write("#SBATCH --mail-type=end\n")
@@ -101,6 +101,6 @@ for line in open(file):
 
 	# get the first pair of a fastq file and assign for use
 	sambam.write("filename=`find " + params.output_dir + "/" + genome + " -name \"*.sam\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
-	sambam.write("python " + params.scripts_dir + "/sam2bam.py -s \$filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk +" -j " + params.jvm + " -t " + params.tmp_dir + "\n")
+	sambam.write("python " + params.scripts_dir + "/sam2bam.py -s \$filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk + " -j " + params.jvm + " -t " + params.tmp_dir + "\n")
 	sambam.write("mv " + genome + "-fq2sam.*.error " + genome + "-fq2sam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	sambam.close()

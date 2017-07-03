@@ -6,7 +6,7 @@ from classes import CreateAlignmentParams
 from classes import writeFile
 
 # get the genome file
-file_input = sys.argv[1]
+input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateAlignmentParams
@@ -40,7 +40,7 @@ for line in open(params.fp):
 		params.bwa = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
-for line in open(file_input):
+for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
 
@@ -93,6 +93,7 @@ for line in open(file_input):
 
 	# get the first pair of a fastq file and assign for use
 	fqsam.write("filename=`find " + params.input_dir + "/" + genome + " -name \"*1.fastq.gz\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
+	fqsam.write("\n")
 	fqsam.write("python " + params.scripts_dir + "/fq2sam.py -r " + params.reference_dir + " -p \$filename -o " + params.output_dir + " -t \$SLURM_CPUS_PER_TASK\n")
 	
 	fqsam.close()
