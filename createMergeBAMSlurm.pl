@@ -78,7 +78,7 @@ while (my $line=readline*FILE){
 	print OUT "module load samtools/1.0\n";
 	print OUT "\n";
 	print OUT "perl $scripts_dir/mergebam.pl $output_dir $genome\n";
-	print OUT "mv $genome-sam2bam*.error $genome-sam2bam.*.out $analysis_dir/$disk/$genome/logs";
+	print OUT "mv $genome-sam2bam.*.error $genome-sam2bam.*.out $analysis_dir/$disk/$genome/logs";
 	close OUT;
 }
 close FILE;

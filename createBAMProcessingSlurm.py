@@ -100,7 +100,7 @@ for line in open(input_file):
 	sambam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	sambam.write("filename=`find " + params.output_dir + "/" + genome + " -name \"*.sam\" | tail -n +\${SLURM_ARRAY_TASK_ID} | head -1`\n")
-	sambam.write("python " + params.scripts_dir + "/sam2bam.py -s \$filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk + " -j " + params.jvm + " -t " + params.tmp_dir + "\n")
+	sambam.write("filename=`find " + params.output_dir + "/" + genome + " -name \"*.sam\" | tail -n +${SLURM_ARRAY_TASK_ID} | head -1`\n")
+	sambam.write("python " + params.scripts_dir + "/sam2bam.py -s $filename -r " + params.reference_dir + " -p " + params.picard + " -g " + params.gatk + " -j " + params.jvm + " -t " + params.tmp_dir + "\n")
 	sambam.write("mv " + genome + "-fq2sam.*.error " + genome + "-fq2sam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	sambam.close()

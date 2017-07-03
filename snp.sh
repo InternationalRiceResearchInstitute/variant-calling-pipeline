@@ -35,10 +35,10 @@ if [ "$inc_pairs" = true ]	#if there are incomplete pairs
 then
 	exit $			#exit program
 fi
-perl createFormatReference.pl
+./createFormatReference.py
 format=$(sbatch format.sh)		#format reference
 
-./createAlignmentSlurm.pl  $filename $disk		#create slurm scripts for each step
+./createAlignmentSlurm.py $filename $disk		#create slurm scripts for each step
 ./createBAMProcessingSlurm.py $filename $disk
 ./createMergeBAMSlurm.py $filename $disk
 ./createVariantCallingSlurm.py $filename $disk
