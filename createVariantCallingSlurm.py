@@ -6,7 +6,7 @@ from classes import CreateVariantCallingParams
 from classes import writeFile
 
 # get the genome file
-file = sys.argv[1]
+input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateVariantCallingParams
@@ -48,35 +48,46 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
+	elif re.findall(r'samtool=', line):
+		params.samtools = line.split('=')[-1].rstrip()
+
+	elif re.findall(r'htslib', line):
+		params.htslib = line.split('=')[-1].rstrip()
+
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
-for line in open(file):
+for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
 
 	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk
 	slurm_file = "submit_bam2vcf_slurm.sh"
+	exec_file = os.path.join(path, slurm_file)
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome
 	bamvcf_file = genome + "-bam2vcf.slurm"
+	output_file = os.path.join(output_path, bamvcf_file)
 
 	# creates a submit shell script between job submission
 	# to prevent timeout
-	script = open(os.path.join(path, slurm_file), "w")
-	writeFile(script, os.path.join(output_path, bamvcf_file))
+	script = open(exec_file, "w")
+	script.write("#!/bin/bash\n")
+	script.write("\n")
+	script.write("sbatch " + output_file + "\n")
+	script.write("sleep 10m\n")
 	script.close()
 
 	# creates slurm script
-	bamvcf = open(os.path.join(output_path, bamvcf_file), "w")
+	bamvcf = open(output_file, "w")
 	bamvcf.write("#!/bin/bash\n")
 	bamvcf.write("\n")
 
 	bamvcf.write("#SBATCH -J " + genome + "-bam2vcf\n")
 	bamvcf.write("#SBATCH -o " + genome + "-bam2vcf.%j.out\n")
-	bamvcf.write("#SBATCH -c 8\n")
+	bamvcf.write("#SBATCH -c " + params.cpu + "\n")
 	bamvcf.write("#SBATCH --partition=" + params.partition + "\n")
 	bamvcf.write("#SBATCH -e " + genome + "-bam2vcf.%j.error\n")
 	bamvcf.write("#SBATCH --mail-user=" + params.email + "\n")
@@ -86,12 +97,12 @@ for line in open(file):
 
 	# loads the modules
 	bamvcf.write("module load jdk\n")
-	bamvcf.write("module load samtools/1.0\n")
-	bamvcf.write("module load htslib/1.0\n")
+	bamvcf.write("module load samtools/" + params.samtools + "\n")
+	bamvcf.write("module load htslib/" + params.htslib + "\n")
 	# bamvcf.write("module load python/2.7.11\n")
 	bamvcf.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/" +  genome + ".merged.bam -r " + params.reference_dir + "r -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
+	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/" +  genome + ".merged.bam -r " + params.reference_dir + " -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
 	bamvcf.write("mv " + genome + "-mergebam.*.error " + genome + "-mergebam.*.out " + genome + "-bam2vcf.*.error " + genome + "-bam2vcf.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	bamvcf.close()

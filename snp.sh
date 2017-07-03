@@ -5,8 +5,6 @@ conf=`grep -n "disk" config`
 disk=${conf##*=}
 conf=`grep -n "input_dir" config`
 input_dir=${conf##*=}
-conf=`grep -n "scripts_dir" config`
-scripts_dir=${conf##*=}
 filename="input.info"
 inc_pairs=false
 
@@ -37,13 +35,13 @@ if [ "$inc_pairs" = true ]	#if there are incomplete pairs
 then
 	exit $			#exit program
 fi
-perl createFormatReference.pl
+./createFormatReference.py
 format=$(sbatch format.sh)		#format reference
 
-python createAlignmentSlurm.py $filename $disk		#create slurm scripts for each step
-python createBAMProcessingSlurm.py $filename $disk
-python createMergeBAMSlurm.py $filename $disk
-python createVariantCallingSlurm.py $filename $disk
+./createAlignmentSlurm.py $filename $disk		#create slurm scripts for each step
+./createBAMProcessingSlurm.py $filename $disk
+./createMergeBAMSlurm.py $filename $disk
+./createVariantCallingSlurm.py $filename $disk
 
 while read -r line			#read each line to get the genomes
 do

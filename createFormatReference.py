@@ -23,6 +23,12 @@ for line in open(params.fp):
 	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
+	elif re.findall(r'samtool', line):
+		params.samtools = line.split('=')[-1].rstrip()
+
+	elif re.findall(r'bwas=', line):
+		params.bwa = line.split('=')[-1].rstrip()
+		
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
@@ -38,17 +44,17 @@ for line in open(params.fp):
 
 	slurm.write("#SBATCH -J format_reference\n")
 	slurm.write("#SBATCH -o format_reference.%j.out\n")
-	slurm.write("#SBATCH --partition=$partition\n")
+	slurm.write("#SBATCH --partition=" + params.partition + "\n")
 	slurm.write("#SBATCH -e format_reference.%j.error\n")
-	slurm.write("#SBATCH --mail-user=$email\n")
+	slurm.write("#SBATCH --mail-user=" + params.email + "\n")
 	slurm.write("#SBATCH --mail-type=begin\n")
 	slurm.write("#SBATCH --mail-type=end\n")
 	slurm.write("#SBATCH --requeue\n")
 	slurm.write("formatted=1\n")
 	slurm.write("\n")
 
-	slurm.write("module load samtools/1.0\n")
-	slurm.write("module load bwa/0.7.10\n")
+	slurm.write("module load samtools/" + params.samtools + "\n")
+	slurm.write("module load bwa/" + params.bwa + "\n")
 	slurm.write("module load jdk\n")
 	slurm.write("\n")
 
@@ -57,7 +63,7 @@ for line in open(params.fp):
 	slurm.write("fi\n")
 	slurm.write("\n")
 
-	slurm.write("if [ \"\$formatted\" -eq 1 ]; then\n")
+	slurm.write("if [ \"$formatted\" -eq 1 ]; then\n")
 	slurm.write("bwa index -a is " + params.reference_dir + "\n\n")
 	slurm.write("java -Xmx8g -jar " + params.picard + "/CreateSequenceDictionary.jar REFERENCE=" + params.reference_dir + " OUTPUT=" + params.dictionary_out + "\n\n")
 	slurm.write("samtools faidx " + params.reference_dir + "\n")
