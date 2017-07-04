@@ -87,7 +87,7 @@ for line in open(input_file):
 	sambam.write("#SBATCH -c " + params.cpu + "\n")
 	sambam.write("#SBATCH --array=1-" + str(count) + "\n")
 	sambam.write("#SBATCH --partition=" + params.partition + "\n")
-	sambam.write("#SBATCH -e " + genome + "sam2bam.%j.error\n")
+	sambam.write("#SBATCH -e " + genome + "-sam2bam.%j.error\n")
 	sambam.write("#SBATCH --mail-user=" + params.email + "\n")
 	sambam.write("#SBATCH --mail-type=begin\n")
 	sambam.write("#SBATCH --mail-type=end\n")

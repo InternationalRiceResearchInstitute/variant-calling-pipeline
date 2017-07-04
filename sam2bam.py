@@ -11,6 +11,15 @@ def main(argv):
     gatk = ''
     java_memory = ''
     temp_dir = ''
+    fixMisencoded = ''
+    fp = 'config'
+
+    for line in open(fp):
+        if re.findall(r'fixMisencoded=', line):
+            fixMisencoded = line.split('=')[-1].rstrip()
+            if fixMisencoded == 'TRUE':
+                fixMisencoded = '-fixMisencodedQuals '
+                break
 
     #get arguments
     try:
@@ -120,7 +129,7 @@ def main(argv):
     run_target_creator = 'java ' + memory + ' ' + '-jar ' + \
         gatk + ' -T RealignerTargetCreator -R ' + reference + \
         ' ' + '-o ' + realignment_list + ' ' + '-I ' + addrep_bam + \
-        ' ' + '-nt 2'
+        ' ' + fixMisencoded + '-nt 2'
         # ' ' + '-fixMisencodedQuals -nt 2'
     os.system(run_target_creator)
     
@@ -129,7 +138,7 @@ def main(argv):
     run_realigner = 'java ' + memory + ' ' + '-jar ' + \
         gatk + ' -T IndelRealigner -R ' + reference + \
         ' ' + '-targetIntervals ' + realignment_list + ' ' + '-I ' + addrep_bam + \
-        ' ' + '-o ' + realignment_bam
+        ' ' + fixMisencoded + '-o ' + realignment_bam
         # ' ' + '-fixMisencodedQuals -o ' + realignment_bam
     os.system(run_realigner)
 
@@ -141,6 +150,16 @@ def main(argv):
         ' ' + mark_dup_bai + ' ' + addrep_bai + ' ' + sorted_bam
     print remove_intermediate
     # os.system(remove_intermediate)
+
+    file = open(fp, "r+")
+    lines = file.readlines()
+    file.seek(0)
+
+    for line in lines:
+        if line != "fixMisencoded=TRUE\n" and line != "fixMisencoded=FALSE\n":
+            file.write(line)
+    file.truncate()
+    file.close()
 
 if __name__ == "__main__":
     main(sys.argv[1:]) 

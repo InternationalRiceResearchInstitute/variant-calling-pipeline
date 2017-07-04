@@ -5,6 +5,7 @@ software_dir=/home/jppascual/software
 output_dir=/home/jppascual/scratch1/output
 analysis_dir=/home/jppascual/analysis
 scripts_dir=/home/jppascual/scripts/variant-calling-pipeline
+qcheck_dir=/home/jppascual/input/FastQC
 tmp_dir=/home/jppascual/scratch1/tmp
 disk=test
 
@@ -14,6 +15,8 @@ gatk=/home/jppascual/software/GenomeAnalysisTK-3.2-2/GenomeAnalysisTK.jar
 samtools=samtools faidx
 bgzip=bgzip
 tabix=tabix
+
+[MISENCODED EQUALS]
 
 [SLURM PARAMETERS]
 email=jppascual2@up.edu.ph

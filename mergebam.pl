@@ -60,7 +60,7 @@ if (-e "$outputDir/$rawDir/$mergeBam"){
 	print "$mergeBam already exists.\n";
 } else {
 	print "Merging realigned BAM files...\n";
-	system("samtools merge $outputDir/$rawDir/$mergeBam   $outputDir/$rawDir/*.realign.bam");
+	system("samtools merge $outputDir/$rawDir/$mergeBam $outputDir/$rawDir/*.realign.bam");
 	print "Realigned BAM files merged into $mergeBam.\n";
 }
 if (-e "$outputDir/$rawDir/$mergeBam.bai"){

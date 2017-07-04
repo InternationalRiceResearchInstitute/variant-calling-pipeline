@@ -24,6 +24,12 @@ class CreateAlignmentParams():
 	cpu = '8'
 	fp = 'config'
 
+class CreateQualityParams():
+	input_dir = ''
+	output_dir = ''
+	qcheck_dir = ''
+	fp = 'config'
+
 class CreateBAMProcessingParams():
 	analysis_dir = ''
 	input_dir = ''
