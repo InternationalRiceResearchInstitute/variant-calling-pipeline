@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys, getopt, re, os, subprocess
+import os.path
 
 def main(argv):
 
@@ -11,15 +12,9 @@ def main(argv):
     gatk = ''
     java_memory = ''
     temp_dir = ''
-    fixMisencoded = ''
+    genome = ''
+    fixMisencoded = ' '
     fp = 'config'
-
-    for line in open(fp):
-        if re.findall(r'fixMisencoded=', line):
-            fixMisencoded = line.split('=')[-1].rstrip()
-            if fixMisencoded == 'TRUE':
-                fixMisencoded = '-fixMisencodedQuals '
-                break
 
     #get arguments
     try:
@@ -58,7 +53,19 @@ def main(argv):
             java_memory = arg
         elif opt in ("-t", "--temp"):
             temp_dir = arg
-    
+
+    genome = os.path.basename(sam)
+    genome = sam.replace(".sam", "")
+
+    for line in open(fp):
+        if re.findall(r'fixMisencoded-' + genome, line):
+            fixMisencoded = line.split('=')[-1].rstrip()
+            if fixMisencoded == 'TRUE':
+                fixMisencoded = '-fixMisencodedQuals '
+            else:
+                fixMisencoded = ' '
+            break
+
     #additional variables
     memory = '-Xmx' + java_memory 
     tmp_dir = 'TMP_DIR=' + temp_dir 
@@ -151,15 +158,15 @@ def main(argv):
     print remove_intermediate
     # os.system(remove_intermediate)
 
-    file = open(fp, "r+")
-    lines = file.readlines()
-    file.seek(0)
+#    file = open(fp, "r+")
+#    lines = file.readlines()
+#    file.seek(0)
 
-    for line in lines:
-        if line != "fixMisencoded=TRUE\n" and line != "fixMisencoded=FALSE\n":
-            file.write(line)
-    file.truncate()
-    file.close()
+#    for line in lines:
+#        if line != "fixMisencoded=TRUE\n" and line != "fixMisencoded=FALSE\n":
+#            file.write(line)
+#    file.truncate()
+#    file.close()
 
 if __name__ == "__main__":
     main(sys.argv[1:]) 

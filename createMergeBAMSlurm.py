@@ -84,5 +84,6 @@ for line in open(input_file):
 
 	# get the first pair of a fastq file and assign for use
 	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + " " + genome + "\n")
+	mergebam.write("python " + params.scripts_dir + "/bamvalidator.py -b " + params.output_dir + "/" + genome + "/" + "\"*.merged.bam\" -o " + params.output_dir + "/" + genome + "\n")
 	mergebam.write("mv " + genome + "-sam2bam.*.error " + genome + "-sam2bam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	mergebam.close()
