@@ -11,6 +11,9 @@ def main(argv):
     gatk = ''
     java_memory = ''
     temp_dir = ''
+    genome = ''
+    fixMisencoded = ' '
+    fp = 'config'
 
     #get arguments
     try:
@@ -50,6 +53,18 @@ def main(argv):
         elif opt in ("-t", "--temp"):
             temp_dir = arg
     
+    genome = os.path.basename(sam)
+    genome = sam.replace(".sam", "")
+
+    for line in open(fp):
+        if re.findall(r'fixMisencoded-' + genome, line):
+            fixMisencoded = line.split('=')[-1].rstrip()
+            if fixMisencoded == 'TRUE':
+                fixMisencoded = '-fixMisencodedQuals '
+            else:
+                fixMisencoded = ' '
+            break
+
     #additional variables
     memory = '-Xmx' + java_memory 
     tmp_dir = 'TMP_DIR=' + temp_dir 
@@ -120,8 +135,8 @@ def main(argv):
     run_target_creator = 'java ' + memory + ' ' + '-jar ' + \
         gatk + ' -T RealignerTargetCreator -R ' + reference + \
         ' ' + '-o ' + realignment_list + ' ' + '-I ' + addrep_bam + \
-        ' ' + '-nt 2'
-        # ' ' + '-fixMisencodedQuals -nt 2'
+        ' ' + fixMisencoded + '-nt 2'
+        # ' ' + '-nt 2'
     os.system(run_target_creator)
     
     #6. INDEL REALIGNER
@@ -129,8 +144,8 @@ def main(argv):
     run_realigner = 'java ' + memory + ' ' + '-jar ' + \
         gatk + ' -T IndelRealigner -R ' + reference + \
         ' ' + '-targetIntervals ' + realignment_list + ' ' + '-I ' + addrep_bam + \
-        ' ' + '-o ' + realignment_bam
-        # ' ' + '-fixMisencodedQuals -o ' + realignment_bam
+        ' ' + fixMisencoded + '-o ' + realignment_bam
+        # ' ' + '-o ' + realignment_bam
     os.system(run_realigner)
 
     #7. CLEAN-UP INTERMEDIATE FILES

@@ -12,6 +12,12 @@ class CreateFormatReferenceParams():
 	dictionary = '.dict'
 	fp = 'config'
 
+class CreateQualityParams():
+	input_dir = ''
+	output_dir = ''
+	qcheck_dir = ''
+	fp = 'config'
+
 class CreateAlignmentParams():
 	analysis_dir = ''
 	input_dir = ''
@@ -21,7 +27,7 @@ class CreateAlignmentParams():
 	email = ''
 	partition = ''
 	bwa = ''
-	cpu = '8'
+	cpu_fqsam = ''
 	fp = 'config'
 
 class CreateBAMProcessingParams():
@@ -35,9 +41,9 @@ class CreateBAMProcessingParams():
 	picard = ''
 	gatk = ''
 	email = ''
-	cpu = '6'
+	cpu_sambam = ''
 	partition = ''
-	jvm = '8g'
+	jvm = ''
 	fp = 'config'
 
 class CreateMergeBAMParams():
@@ -47,7 +53,7 @@ class CreateMergeBAMParams():
 	scripts_dir = ''
 	output_dir = ''
 	email = ''
-	cpu = '6'
+	cpu_mergebam = ''
 	samtools = ''
 	partition = ''
 	fp = 'config'
@@ -64,7 +70,7 @@ class CreateVariantCallingParams():
 	bgzip = ''
 	tabix = ''
 	email = ''
-	cpu = '8'
+	cpu_bamvcf = ''
 	samtools = ''
 	htslib = ''
 	partition = ''
