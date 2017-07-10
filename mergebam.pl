@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
+use warnings;
 
 my $starttime=localtime();
 print "Start time: $starttime\n";
@@ -55,31 +56,48 @@ close($fp);
 #system("rm $outputDir/$rawDir/*.list");
 #print "List files removed.\n";
 
-my $mergeBam="$rawDir.merged.bam";
-if (-e "$outputDir/$rawDir/$mergeBam"){
-	print "$mergeBam already exists.\n";
-} else {
-	print "Merging realigned BAM files...\n";
-	system("samtools merge $outputDir/$rawDir/$mergeBam $outputDir/$rawDir/*.realign.bam");
-	print "Realigned BAM files merged into $mergeBam.\n";
-}
-if (-e "$outputDir/$rawDir/$mergeBam.bai"){
-	print "$mergeBam.bai already exists.\n";
-} else {
-	system("samtools index $outputDir/$rawDir/$mergeBam");
-	print "$mergeBam indexed.\n";
-}
+my $input = 'input.info';
+my $count="";
+my $genome="";
 
-#remove intermediate files
-system("rm $outputDir/$rawDir/*.list");
-system("rm $outputDir/$rawDir/*.realign.bam");
-system("rm $outputDir/$rawDir/*.realign.bai");
+open FILE, $input or die $!;
+while (my $data=readline*FILE){
+	$data=~/(.*):(.*)/;
+	$genome=$1;
+	$count=$2;
+
+	if($rawDir eq $genome){
+
+		if($count > 2){
+			my $mergeBam="$rawDir.merged.bam";
+			if (-e "$outputDir/$rawDir/$mergeBam"){
+				print "$mergeBam already exists.\n";
+			} else {
+				print "Merging realigned BAM files...\n";
+				system("samtools merge $outputDir/$rawDir/$mergeBam $outputDir/$rawDir/*.realign.bam");
+				print "Realigned BAM files merged into $mergeBam.\n";
+			}
+			if (-e "$outputDir/$rawDir/$mergeBam.bai"){
+				print "$mergeBam.bai already exists.\n";
+			} else {
+				#system("samtools index $outputDir/$rawDir/$mergeBam");
+				print "$mergeBam indexed.\n";
+			}
+
+			#remove intermediate files
+			system("rm $outputDir/$rawDir/*.list");
+			system("rm $outputDir/$rawDir/*.realign.bam");
+			system("rm $outputDir/$rawDir/*.realign.bai");
+		}
+	}
+}
+close FILE;
 
 #my $snp_calling_output="$rawDir.vcf";
 #print "Calling variants...\n";
 #system("java $javaMemory -XX:ParallelGCThreads=2 -jar $softwareDir/$gatk/GenomeAnalysisTK.jar -T UnifiedGenotyper -nt 10 -R $refDir/$refGenome/$refSeq -I $outputDir/$rawDir/$mergeBam -o $outputDir/$rawDir/$snp_calling_output -glm BOTH -mbq 20 --genotyping_mode DISCOVERY -out_mode $vcfOutMode");
 
-#print "Compressing VCF file...\n";
+#print "Compressing VC2F file...\n";
 #system("/home/jdetras/software/samtools-1.0/htslib-1.0/./bgzip $outputDir/$rawDir/$snp_calling_output");
 
 my $endtime=localtime();
