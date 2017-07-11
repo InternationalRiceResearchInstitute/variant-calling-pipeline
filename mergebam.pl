@@ -80,7 +80,7 @@ while (my $data=readline*FILE){
 			if (-e "$outputDir/$rawDir/$mergeBam.bai"){
 				print "$mergeBam.bai already exists.\n";
 			} else {
-				#system("samtools index $outputDir/$rawDir/$mergeBam");
+				system("samtools index $outputDir/$rawDir/$mergeBam");
 				print "$mergeBam indexed.\n";
 			}
 

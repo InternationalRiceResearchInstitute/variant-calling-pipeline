@@ -103,6 +103,6 @@ for line in open(input_file):
 	bamvcf.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/" + genome + ".merged.bam -r " + params.reference_dir + " -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
+	bamvcf.write("python " + params.scripts_dir + "/bam2vcf.py -b " + params.output_dir + "/" +  genome + "/ -r " + params.reference_dir + " -g " + params.gatk + " -t " + params.tmp_dir + " -z " + params.bgzip + " -x " + params.tabix + "\n")
 	bamvcf.write("mv " + genome + "-mergebam.*.error " + genome + "-mergebam.*.out " + genome + "-bam2vcf.*.error " + genome + "-bam2vcf.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	bamvcf.close()
