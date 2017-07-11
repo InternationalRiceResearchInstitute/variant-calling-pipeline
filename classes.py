@@ -55,6 +55,7 @@ class CreateMergeBAMParams():
 	email = ''
 	cpu = '6'
 	samtools = ''
+	bamutil = ''
 	partition = ''
 	fp = 'config'
 

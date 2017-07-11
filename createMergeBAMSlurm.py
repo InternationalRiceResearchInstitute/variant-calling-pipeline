@@ -36,6 +36,9 @@ for line in open(params.fp):
 	elif re.findall(r'samtool=', line):
 		params.samtools = line.split('=')[-1].rstrip()
 
+	elif re.findall(r'bamutil=', line):
+		params.bamutil = line.split('=')[-1].rstrip()
+
 	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
@@ -80,10 +83,11 @@ for line in open(input_file):
 
 	# loads the module to be used
 	mergebam.write("module load samtools/" + params.samtools + "\n")
+	mergebam.write("module load bamutil/" + params.bamutil + "\n")
 	mergebam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
 	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + " " + genome + "\n")
-	#mergebam.write("python " + params.scripts_dir + "/bamvalidator.py -b " + params.output_dir + "/" + genome + "/ -o " + params.output_dir + "/" + genome + "\n")
+	mergebam.write("python " + params.scripts_dir + "/bamvalidator.py -b " + params.output_dir + "/" + genome + " -o " + params.output_dir + "/" + genome + "\n")
 	mergebam.write("mv " + genome + "-sam2bam.*.error " + genome + "-sam2bam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	mergebam.close()

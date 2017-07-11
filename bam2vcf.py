@@ -48,15 +48,11 @@ def main(argv):
         if not genome: break
 
         if re.findall(r'(merged+\.+bam)', genome):
-	    print "merged.bam:    " + genome
-            bam = bam + "/" + genome
-            print "this is bam:   " + bam
+            bam = bam + genome
             vcf = bam.replace('merged.bam', 'vcf')
             break
         elif re.findall(r'(realign+\.+bam)', genome):
-            print "realign.bam:   " + genome
-            bam = bam + "/" + genome
-            print "this is bam r: " + bam
+            bam = bam + genome
             vcf = bam.replace('realign.bam', 'vcf')
             break
 
