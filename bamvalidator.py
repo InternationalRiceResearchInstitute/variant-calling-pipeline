@@ -28,7 +28,7 @@ def main(argv):
         elif opt in ("-o", "--outputdir"):
             output_dir = arg
 
-    #bam = bam.rstrip('\n')
+    bam = bam.rstrip('\n')
 
     p = os.popen('ls ' + bam, "r")
     while 1:
