@@ -9,24 +9,24 @@ params = CreateFormatReferenceParams()
 attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
 for line in open(params.fp):
-	if re.findall(r'reference_dir=', line):
+	if re.findall(r'reference_dir', line):
 		params.reference_dir = line.split('=')[-1].rstrip()
 		params.dictionary_out = params.reference_dir
 		params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
 
-	elif re.findall(r'scripts_dir=', line):
+	elif re.findall(r'scripts_dir', line):
 		params.scripts_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'picard=', line):
+	elif re.findall(r'picard', line):
 		params.picard = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'email=', line):
+	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'samtool=', line):
+	elif re.findall(r'samtool', line):
 		params.samtools = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'bwa=', line):
+	elif re.findall(r'bwas=', line):
 		params.bwa = line.split('=')[-1].rstrip()
 		
 	elif re.findall(r'partition', line):

@@ -15,43 +15,37 @@ attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)
 
 # reads the config file and get the respective values for each
 for line in open(params.fp):
-	if re.findall(r'analysis_dir=', line):
+	if re.findall(r'analysis_dir', line):
 		params.analysis_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'input_dir=', line):
+	elif re.findall(r'input_dir', line):
 		params.input_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'reference_dir=', line):
+	elif re.findall(r'reference_dir', line):
 		params.reference_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'scripts_dir=', line):
+	elif re.findall(r'scripts_dir', line):
 		params.scripts_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'output_dir=', line):
+	elif re.findall(r'output_dir', line):
 		params.output_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'software_dir=', line):
+	elif re.findall(r'software_dir', line):
 		params.software_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'tmp_dir=', line):
+	elif re.findall(r'tmp_dir', line):
 		params.tmp_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'gatk=', line):
+	elif re.findall(r'gatk', line):
 		params.gatk = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'jvm=', line):
-		params.jvm = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'picard=', line):
+	elif re.findall(r'picard', line):
 		params.picard = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'email=', line):
+	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'cpu_sambam=', line):
-		params.cpu_sambam = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'partition=', line):
+	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
@@ -90,7 +84,7 @@ for line in open(input_file):
 
 	sambam.write("#SBATCH -J " + genome + "\n")
 	sambam.write("#SBATCH -o " + genome + "-sam2bam.%j.out\n")
-	sambam.write("#SBATCH -c " + params.cpu_sambam + "\n")
+	sambam.write("#SBATCH -c " + params.cpu + "\n")
 	sambam.write("#SBATCH --array=1-" + str(count) + "\n")
 	sambam.write("#SBATCH --partition=" + params.partition + "\n")
 	sambam.write("#SBATCH -e " + genome + "-sam2bam.%j.error\n")

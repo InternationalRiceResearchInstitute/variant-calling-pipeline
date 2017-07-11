@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 import sys, getopt, subprocess, os, re
-from subprocess import Popen
+from subprocess import Popen, PIPE
+from subprocess import call
 
 def main(argv):
 
@@ -26,7 +27,22 @@ def main(argv):
             bam = arg
         elif opt in ("-o", "--outputdir"):
             output_dir = arg
+
     bam = bam.rstrip('\n')
+
+    p = os.popen('ls ' + bam, "r")
+    while 1:
+        genome = p.readline().rstrip()
+        if not genome: break
+
+        if re.findall(r'(merged+\.+bam)', genome):
+            bam = bam + genome
+            print bam
+            break
+        elif re.findall(r'(realign+\.+bam)', genome):
+            bam = bam +  genome
+            break
+
     split_dir = re.search(r'(.*)/(.*)/(.*bam)', bam, re.M)
     if split_dir:
         input_dir = split_dir.group(1)
@@ -36,8 +52,8 @@ def main(argv):
         print "Nothing found!"
 
     bam_out = bamfile.replace('bam', 'txt')
-    out = open(output_dir + '/' + bam_out, 'w')
-    run = subprocess.call(['bam', 'validate', '--in', bam, '--verbose'], stdout=out, stderr=subprocess.STDOUT)
+    with open(output_dir + '/' + bam_out, 'w') as out:
+        subprocess.call(['bam', 'validate', '--in', bam, '--verbose'], stdout=out, stderr=subprocess.STDOUT)
     print "Input:" + bam
 
 if __name__ == "__main__":

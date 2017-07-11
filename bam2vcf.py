@@ -37,16 +37,28 @@ def main(argv):
             gatk = arg
         elif opt in ("-t", "--temp_dir"):
             temp_dir = arg
-        elif opt in ("-z", "bgzip"):
+        elif opt in ("-z", "--bgzip"):
             bgzip = arg
-        elif opt in ("-x", "tabix"):
+        elif opt in ("-x", "--tabix"):
             tabix = arg
-               
-    vcf = bam.replace('merged.bam', 'vcf')
-    
+
+    p = os.popen('ls ' + bam, "r")
+    while 1:
+        genome = p.readline().rstrip()
+        if not genome: break
+
+        if re.findall(r'(merged+\.+bam)', genome):
+            bam = bam + genome
+            vcf = bam.replace('merged.bam', 'vcf')
+            break
+        elif re.findall(r'(realign+\.+bam)', genome):
+            bam = bam + genome
+            vcf = bam.replace('realign.bam', 'vcf')
+            break
+
     subprocess.call(['java', '-Xmx8g',
             '-Djava.io.tmpdir=' + temp_dir,
-           '-jar', gatk,
+            '-jar', gatk,
             '-T', 'UnifiedGenotyper',
             '-R', reference,
             '-I', bam,

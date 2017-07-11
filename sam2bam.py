@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys, getopt, re, os, subprocess
+import os.path
 
 def main(argv):
 
@@ -52,7 +53,7 @@ def main(argv):
             java_memory = arg
         elif opt in ("-t", "--temp"):
             temp_dir = arg
-    
+
     genome = os.path.basename(sam)
     genome = sam.replace(".sam", "")
 
@@ -136,7 +137,7 @@ def main(argv):
         gatk + ' -T RealignerTargetCreator -R ' + reference + \
         ' ' + '-o ' + realignment_list + ' ' + '-I ' + addrep_bam + \
         ' ' + fixMisencoded + '-nt 2'
-        # ' ' + '-nt 2'
+        # ' ' + '-fixMisencodedQuals -nt 2'
     os.system(run_target_creator)
     
     #6. INDEL REALIGNER
@@ -145,7 +146,7 @@ def main(argv):
         gatk + ' -T IndelRealigner -R ' + reference + \
         ' ' + '-targetIntervals ' + realignment_list + ' ' + '-I ' + addrep_bam + \
         ' ' + fixMisencoded + '-o ' + realignment_bam
-        # ' ' + '-o ' + realignment_bam
+        # ' ' + '-fixMisencodedQuals -o ' + realignment_bam
     os.system(run_realigner)
 
     #7. CLEAN-UP INTERMEDIATE FILES
@@ -156,6 +157,16 @@ def main(argv):
         ' ' + mark_dup_bai + ' ' + addrep_bai + ' ' + sorted_bam
     print remove_intermediate
     # os.system(remove_intermediate)
+
+#    file = open(fp, "r+")
+#    lines = file.readlines()
+#    file.seek(0)
+
+#    for line in lines:
+#        if line != "fixMisencoded=TRUE\n" and line != "fixMisencoded=FALSE\n":
+#            file.write(line)
+#    file.truncate()
+#    file.close()
 
 if __name__ == "__main__":
     main(sys.argv[1:]) 

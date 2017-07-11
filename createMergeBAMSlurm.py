@@ -15,31 +15,31 @@ attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)
 
 # reads the config file and get the respective values for each
 for line in open(params.fp):
-	if re.findall(r'analysis_dir=', line):
+	if re.findall(r'analysis_dir', line):
 		params.analysis_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'input_dir=', line):
+	elif re.findall(r'input_dir', line):
 		params.input_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'reference_dir=', line):
+	elif re.findall(r'reference_dir', line):
 		params.reference_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'scripts_dir=', line):
+	elif re.findall(r'scripts_dir', line):
 		params.scripts_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'output_dir=', line):
+	elif re.findall(r'output_dir', line):
 		params.output_dir = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'email=', line):
+	elif re.findall(r'email', line):
 		params.email = line.split('=')[-1].rstrip()
 
 	elif re.findall(r'samtool=', line):
 		params.samtools = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'cpu_mergebam=', line):
-		params.cpu_mergebam = line.split('=')[-1].rstrip()
+	elif re.findall(r'bamutil=', line):
+		params.bamutil = line.split('=')[-1].rstrip()
 
-	elif re.findall(r'partition=', line):
+	elif re.findall(r'partition', line):
 		params.partition = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
@@ -72,7 +72,7 @@ for line in open(input_file):
 
 	mergebam.write("#SBATCH -J " + genome + "\n")
 	mergebam.write("#SBATCH -o " + genome + "-mergebam.%j.out\n")
-	mergebam.write("#SBATCH -c " + params.cpu_mergebam + "\n")
+	mergebam.write("#SBATCH -c " + params.cpu + "\n")
 	mergebam.write("#SBATCH --partition=" + params.partition + "\n")
 	mergebam.write("#SBATCH -e " + genome + "-mergebam.%j.error\n")
 	mergebam.write("#SBATCH --mail-user=" + params.email + "\n")
@@ -83,9 +83,11 @@ for line in open(input_file):
 
 	# loads the module to be used
 	mergebam.write("module load samtools/" + params.samtools + "\n")
+	mergebam.write("module load bamutil/" + params.bamutil + "\n")
 	mergebam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
 	mergebam.write("perl " + params.scripts_dir + "/mergebam.pl " + params.output_dir + " " + genome + "\n")
+	mergebam.write("python " + params.scripts_dir + "/bamvalidator.py -b " + params.output_dir + "/" + genome + "/ -o " + params.output_dir + "/" + genome + "\n")
 	mergebam.write("mv " + genome + "-sam2bam.*.error " + genome + "-sam2bam.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	mergebam.close()
