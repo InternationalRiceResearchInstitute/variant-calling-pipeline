@@ -2,37 +2,37 @@
 use strict;
 use warnings;
 
-my $starttime=localtime();
-print "Start time: $starttime\n";
+my $start_time=localtime();
+print "Start time: $start_time\n";
 #directories
 
-my $refDir="";
-my $softwareDir="";
-my $refSeq=$ARGV[2]; #"os.ir64.cshl.draft.1.0.scaffold.fa";
-my $refGenome=$ARGV[3]; #"indica/ir64";
+my $reference_dir="";
+my $software_dir="";
+my $ref_genome=$ARGV[3]; #"indica/ir64";
+my $reference_seq=$ARGV[2]; #"os.ir64.cshl.draft.1.0.scaffold.fa";
 my $samtools="";
 my $gatk="";
-my $javaMemory="-Xmx8g";
-my $vcfOutMode="EMIT_ALL_SITES";
+my $java_memory="-Xmx8g";
+my $vcf_out_mode="EMIT_ALL_SITES";
 
-my $outputDir=$ARGV[0];
-my $rawDir=$ARGV[1];
+my $output_dir=$ARGV[0];
+my $raw_dir=$ARGV[1];
 
 my $fp = 'config';
 open my $info, $fp or die "Could not open $fp: $!";
 
 while( my $line = <$info>)  {
         if ($line =~ m/reference_dir/) {
-                $refDir=(split '=', $line)[-1];
-                chomp($refDir);           
+                $reference_dir=(split '=', $line)[-1];
+                chomp($reference_dir);           
         }
 	elsif($line =~ m/gatk/){
                 $gatk=(split '=', $line)[-1];
                 chomp($gatk);           
         }
 	elsif($line =~ m/software_dir/){
-                $softwareDir=(split '=', $line)[-1];
-                chomp($softwareDir);
+                $software_dir=(split '=', $line)[-1];
+                chomp($software_dir);
         }
 	elsif($line =~ m/samtools/){
                 $samtools=(split '=', $line)[-1];
@@ -43,17 +43,17 @@ close($fp);
 
 
 #print "Removing intermdediate files...\n";
-#system("rm $outputDir/$rawDir/*.sam");
+#system("rm $output_dir/$raw_dir/*.sam");
 #print "SAM files removed.\n";
-#system("rm $outputDir/$rawDir/*.fxmt.ba*");
+#system("rm $output_dir/$raw_dir/*.fxmt.ba*");
 #print "Fixmate BAM files removed.\n";
-#system("rm $outputDir/$rawDir/*.mkdup.ba*");
+#system("rm $output_dir/$raw_dir/*.mkdup.ba*");
 #print "Mark duplicate BAM files removed.\n";
-#system("rm $outputDir/$rawDir/*.addrep.ba*");
+#system("rm $output_dir/$raw_dir/*.addrep.ba*");
 #print "Add replaced BAM files removed.\n";
-#system("rm $outputDir/$rawDir/*.metrics");
+#system("rm $output_dir/$raw_dir/*.metrics");
 #print "Metrics files removed.\n";
-#system("rm $outputDir/$rawDir/*.list");
+#system("rm $output_dir/$raw_dir/*.list");
 #print "List files removed.\n";
 
 my $input = 'input.info';
@@ -66,40 +66,40 @@ while (my $data=readline*FILE){
 	$genome=$1;
 	$count=$2;
 
-	if($rawDir eq $genome){
+	if($raw_dir eq $genome){
 
 		if($count > 2){
-			my $mergeBam="$rawDir.merged.bam";
-			if (-e "$outputDir/$rawDir/$mergeBam"){
-				print "$mergeBam already exists.\n";
+			my $merge_bam="$raw_dir.merged.bam";
+			if (-e "$output_dir/$raw_dir/$merge_bam"){
+				print "$merge_bam already exists.\n";
 			} else {
 				print "Merging realigned BAM files...\n";
-				system("samtools merge $outputDir/$rawDir/$mergeBam $outputDir/$rawDir/*.realign.bam");
-				print "Realigned BAM files merged into $mergeBam.\n";
+				system("samtools merge $output_dir/$raw_dir/$merge_bam $output_dir/$raw_dir/*.realign.bam");
+				print "Realigned BAM files merged into $merge_bam.\n";
 			}
-			if (-e "$outputDir/$rawDir/$mergeBam.bai"){
-				print "$mergeBam.bai already exists.\n";
+			if (-e "$output_dir/$raw_dir/$merge_bam.bai"){
+				print "$merge_bam.bai already exists.\n";
 			} else {
-				system("samtools index $outputDir/$rawDir/$mergeBam");
-				print "$mergeBam indexed.\n";
+				system("samtools index $output_dir/$raw_dir/$merge_bam");
+				print "$merge_bam indexed.\n";
 			}
 
 			#remove intermediate files
-			system("rm $outputDir/$rawDir/*.list");
-			system("rm $outputDir/$rawDir/*.realign.bam");
-			system("rm $outputDir/$rawDir/*.realign.bai");
+			system("rm $output_dir/$raw_dir/*.list");
+			system("rm $output_dir/$raw_dir/*.realign.bam");
+			system("rm $output_dir/$raw_dir/*.realign.bai");
 		}
 	}
 }
 close FILE;
 
-#my $snp_calling_output="$rawDir.vcf";
+#my $snp_calling_output="$raw_dir.vcf";
 #print "Calling variants...\n";
-#system("java $javaMemory -XX:ParallelGCThreads=2 -jar $softwareDir/$gatk/GenomeAnalysisTK.jar -T UnifiedGenotyper -nt 10 -R $refDir/$refGenome/$refSeq -I $outputDir/$rawDir/$mergeBam -o $outputDir/$rawDir/$snp_calling_output -glm BOTH -mbq 20 --genotyping_mode DISCOVERY -out_mode $vcfOutMode");
+#system("java $java_memory -XX:ParallelGCThreads=2 -jar $software_dir/$gatk/GenomeAnalysisTK.jar -T UnifiedGenotyper -nt 10 -R $reference_dir/$ref_genome/$reference_seq -I $output_dir/$raw_dir/$merge_bam -o $output_dir/$raw_dir/$snp_calling_output -glm BOTH -mbq 20 --genotyping_mode DISCOVERY -out_mode $vcf_out_mode");
 
 #print "Compressing VC2F file...\n";
-#system("/home/jdetras/software/samtools-1.0/htslib-1.0/./bgzip $outputDir/$rawDir/$snp_calling_output");
+#system("/home/jdetras/software/samtools-1.0/htslib-1.0/./bgzip $output_dir/$raw_dir/$snp_calling_output");
 
-my $endtime=localtime();
-print "End time: $endtime. Done.\n";
+my $end_time=localtime();
+print "End time: $end_time. Done.\n";
 exit();
