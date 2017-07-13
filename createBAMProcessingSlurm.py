@@ -3,7 +3,6 @@
 import sys, re, os
 import os.path
 from classes import CreateBAMProcessingParams
-from classes import writeFile
 
 # get the genome file
 input_file = sys.argv[1]

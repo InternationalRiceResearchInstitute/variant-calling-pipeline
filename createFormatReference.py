@@ -3,7 +3,6 @@
 import sys, re, os
 import os.path
 from classes import CreateFormatReferenceParams
-from classes import writeFile
 
 fasta_file = ".fasta"
 params = CreateFormatReferenceParams()
@@ -15,6 +14,8 @@ for line in open(params.fp):
 
 	elif re.findall(r'reference_dir=', line):
 		params.reference_dir = line.split('=')[-1].rstrip()
+		params.dictionary_out = params.reference_dir
+		params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
 
 	elif re.findall(r'bwa=', line):
 		params.bwa = line.split('=')[-1].rstrip()
@@ -31,11 +32,11 @@ for line in open(params.fp):
 	elif re.findall(r'partition=', line):
 		params.partition = line.split('=')[-1].rstrip()
 
-if fasta in params.reference_dir:
-	params.reference_dir = params.reference_dir.replace(fasta, params.regex)
+#if fasta in params.reference_dir:
+#	params.reference_dir = params.reference_dir.replace(fasta, params.regex)
 
-params.dictionary_out = params.reference_dir
-params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
+#params.dictionary_out = params.reference_dir
+#params.dictionary_out = params.dictionary_out.replace(params.regex, params.dictionary)
 
 for line in open(params.fp):
 	path = params.scripts_dir
