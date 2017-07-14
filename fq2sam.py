@@ -44,8 +44,13 @@ def main(argv):
             bwa_threads = arg
 
     #get read pair names and sam assignment
-    read_pair2 = read_pair1.replace("1.fastq.gz", "2.fastq.gz")
-    sam = read_pair1.replace("_1.fastq.gz", ".sam")
+    fq_file = ".fq.gz"
+    if fq_file in read_pair1:
+        read_pair2 = read_pair1.replace("1.fq.gz", "2.fq.gz")
+        sam = read_pair1.replace("_1.fq.gz", ".sam")
+    else:
+        read_pair2 = read_pair1.replace("1.fastq.gz", "2.fastq.gz")
+        sam = read_pair1.replace("_1.fastq.gz", ".sam")
 
     #extract directories and sam filename
     split_dir = re.search(r'(.*)/(.*)/(.*sam)', sam, re.M)

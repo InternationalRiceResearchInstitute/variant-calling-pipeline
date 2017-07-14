@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os, re, sys
-import zipfile
-import os.path
+import zipfile, os.path, subprocess
+from subprocess import Popen, PIPE
 from classes import CreateQualityParams
 
 # get the genome file
@@ -37,7 +37,7 @@ for line in open(params.fp):
 #os.makedirs(params.output_dir + "/output_qcheck/")
 params.output_dir = os.path.join(params.output_dir, "output_qcheck")
 
-os.system('module load jdk')
+#subprocess.Popen('module load jdk', shell=True, stdout=PIPE).communicate()
 
 # reads the file containing the genome
 for pair in open(input_file):
@@ -55,6 +55,7 @@ for pair in open(input_file):
 		fastqc = os.path.join(params.qcheck_dir, "fastqc")
 		fq_file = os.path.join(params.input_dir, genome)
 
+		subprocess.Popen("module load fastqc/0.11.5")
 		os.system("chmod 755 " + params.qcheck_dir + "/./fastqc")
 		os.system(fastqc + " -o " + params.output_dir  + " " + fq_file + "/" + line)
 

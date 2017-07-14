@@ -97,7 +97,7 @@ for line in open(input_file):
 	fqsam.write("\n")
 
 	# get the first pair of a fastq file and assign for use
-	fqsam.write("filename=`find " + params.input_dir + "/" + genome + " -name \"*1.fastq.gz\" | tail -n +${SLURM_ARRAY_TASK_ID} | head -1`\n")
+	fqsam.write("filename=`find " + params.input_dir + "/" + genome + " -type f \( -name \"*1.fastq.gz\" -o -name \"*1.fq.gz\" \) | tail -n +${SLURM_ARRAY_TASK_ID} | head -1`\n")
 	fqsam.write("\n")
 	fqsam.write("python " + params.scripts_dir + "/fq2sam.py -r " + params.reference_dir + " -p $filename -o " + params.output_dir + " -t $SLURM_CPUS_PER_TASK\n")
 

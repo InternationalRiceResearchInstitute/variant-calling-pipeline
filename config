@@ -2,12 +2,12 @@
 input_dir=/home/jppascual/input/fastq_input
 reference_dir=/home/jppascual/ref_genome/IRGSP-1.0_chr01.fa
 software_dir=/home/jppascual/software
-output_dir=/home/jppascual/scratch1/var_output
+output_dir=/home/jppascual/scratch1/output2
 analysis_dir=/home/jppascual/analysis
 scripts_dir=/home/jppascual/scripts/variant-calling-pipeline
 qcheck_dir=/home/jppascual/input/FastQC
 tmp_dir=/home/jppascual/scratch1/tmp
-disk=var_test
+disk=test2
 
 [SOFTWARE]
 picard=/home/jppascual/software/picard-tools-1.119
@@ -19,10 +19,10 @@ jvm=8g
 sleep=10m
 
 [CPU PARAMETERS]
-cpu_fq2sam=8
-cpu_sam2bam=6
+cpu_fqsam=8
+cpu_sambam=6
 cpu_mergebam=6
-cpu_bam2vcf=8
+cpu_bamvcf=8
 
 [MISENCODED EQUALS]
 fixMisencoded-ERR626274=FALSE
