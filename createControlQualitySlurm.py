@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import sys, re, os
-import os.path
+import sys, re, os, os.path
 from classes import CreateControlQualitySlurm
 
 # get the genome file
@@ -10,38 +9,23 @@ disk = sys.argv[2]
 
 # get the parameters in the class CreateControlQualitySlurm
 params = CreateControlQualitySlurm()
-attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
 # reads the config file and get the respective values for each
 for line in open(params.fp):
-	if re.findall(r'input_dir=', line):
-		params.input_dir = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'output_dir=', line):
-		params.output_dir = line.split('=')[-1].rstrip()
-
-	if re.findall(r'scripts_dir=', line):
-		params.scripts_dir = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'analysis_dir=', line):
-		params.analysis_dir = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'email=', line):
-		params.email = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'sleep=', line):
-		params.sleep = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'partition=', line):
-		params.partition = line.split('=')[-1].rstrip()
-
-	elif re.findall(r'cpu_fastqc=', line):
-		params.cpu_fastqc = line.split('=')[-1].rstrip()
+	if re.findall(r'email=', line): params.email = line.split('=')[-1].rstrip()
+	elif re.findall(r'sleep=', line): params.sleep = line.split('=')[-1].rstrip()
+	elif re.findall(r'partition=', line): params.partition = line.split('=')[-1].rstrip()
+	elif re.findall(r'cpu_fastqc=', line): params.cpu_fastqc = line.split('=')[-1].rstrip()
+	elif re.findall(r'input_dir=', line): params.input_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'output_dir=', line): params.output_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'scripts_dir=', line): params.scripts_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'analysis_dir=', line): params.analysis_dir = line.split('=')[-1].rstrip()
 
 # reads the file containing the genome
 for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
+	count = line[1]
 
 	# create a directory for each genome
 	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
@@ -73,7 +57,7 @@ for line in open(input_file):
 	fastqc.write("#SBATCH -J " + genome + "-fastqc\n")
 	fastqc.write("#SBATCH -o " + genome + "-fastqc.%j.out\n")
 	fastqc.write("#SBATCH -c " + params.cpu_fastqc + "\n")
-	# fastqc.write("#SBATCH --array=1-" + str(count) + "\n")
+	fastqc.write("#SBATCH --array=1-" + str(count) + "\n")
 	fastqc.write("#SBATCH --partition=" + params.partition + "\n")
 	fastqc.write("#SBATCH -e " + genome + "-fastqc.%j.error\n")
 	fastqc.write("#SBATCH --mail-user=" + params.email + "\n")

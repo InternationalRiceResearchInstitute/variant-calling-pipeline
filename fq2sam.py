@@ -12,6 +12,7 @@ def main(argv):
     reference = ''
     read_pair1 = ''
     output_dir = ''
+    genome_dir = ''
  
     #get arguments
     try:

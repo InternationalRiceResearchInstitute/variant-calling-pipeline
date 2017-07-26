@@ -2,12 +2,12 @@
 input_dir=/home/jppascual/input/fastq_input
 reference_dir=/home/jppascual/ref_genome/IRGSP-1.0_chr01.fa
 software_dir=/home/jppascual/software
-output_dir=/home/jppascual/scratch1/thirdoutput
+output_dir=/home/jppascual/scratch1/output2
 analysis_dir=/home/jppascual/analysis
 scripts_dir=/home/jppascual/scripts/variant-calling-pipeline
 qcheck_dir=/home/jppascual/input/FastQC
 tmp_dir=/home/jppascual/scratch1/tmp
-disk=thirdtest
+disk=test2
 
 [SOFTWARE]
 picard=/home/jppascual/software/picard-tools-1.119
@@ -25,11 +25,13 @@ cpu_mergebam=6
 cpu_bamvcf=8
 
 [MISENCODED EQUALS]
-fixMisencoded-ERR626274=FALSE
 fixMisencoded-ERR6213_50=FALSE
 fixMisencoded-ERR6213_49=FALSE
+fixMisencoded-ERR626274_=FALSE
+fixMisencoded-ERR6213_50_=FALSE
+fixMisencoded-ERR6213_49_=FALSE
 
-[SLURM PARAMETERS]s
+[SLURM PARAMETERS]
 email=jppascual2@up.edu.ph
 username=jppascual
 partition=batch
@@ -41,3 +43,4 @@ htslib=1.0
 vcftools=0.1.15
 bamutil=1.0.13
 jdk=1.8.0
+

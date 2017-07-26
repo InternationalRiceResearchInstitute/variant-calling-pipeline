@@ -158,15 +158,5 @@ def main(argv):
     print remove_intermediate
     # os.system(remove_intermediate)
 
-#    file = open(fp, "r+")
-#    lines = file.readlines()
-#    file.seek(0)
-
-#    for line in lines:
-#        if line != "fixMisencoded=TRUE\n" and line != "fixMisencoded=FALSE\n":
-#            file.write(line)
-#    file.truncate()
-#    file.close()
-
 if __name__ == "__main__":
     main(sys.argv[1:]) 

@@ -76,10 +76,16 @@ def main(argv):
                             if re.findall(r'(Sanger | Illumina 1+\.+8+\+)', encoding):
                                 fixMisencoded = 1
                                 break
+                elif re.findall(r'summary', filename):
+                    with contextlib.closing(z.open(filename)) as f:
+                        for data in f:
+                            with open("statistics.txt", "a") as fp:
+                                fp.write(data)
+
 
         # FOR FIXMISENCODED
 
-        ref_genome = re.split('_1.fastq|_2.fastq', line)[0]
+        ref_genome = re.split('1.fastq|2.fastq', line)[0]
 
         # read a list of lines into data
         with open(fp, 'r') as file:
@@ -89,10 +95,8 @@ def main(argv):
             for i, line in enumerate(data):
                 if line.startswith("[MISENCODED EQUALS]"):
                     if not checkIfExists(ref_genome):
-                        if fixMisencoded == 0:
-                                data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=TRUE\n'
-                        else:
-                                data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=FALSE\n'
+                        if fixMisencoded == 0: data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=TRUE\n'
+                        else: data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=FALSE\n'
                         break
 
         # and write everything back

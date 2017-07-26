@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import os, re, sys
-import zipfile, os.path, subprocess
-from subprocess import Popen, PIPE
+import os, re, sys, os.path, zipfile, contextlib
 from classes import CreateQualityParams
 
 # get the genome file
@@ -11,33 +9,27 @@ fixMisencoded = 0;
 
 # get the parameters in the class CreateQualityParams
 params = CreateQualityParams()
-attributes = [attr for attr in dir(params) if not callable(getattr(params, attr)) and not attr.startswith("__")]
 
 # function to check if the fixMisencoded for the genome exists
 def checkIfExists(reference_genome):
 	for line in open(params.fp):
-		if re.findall('fixMisencoded-' + reference_genome + '=FALSE\n', line):
-			return True
-		elif re.findall('fixMisencoded-' + reference_genome + '=TRUE\n', line):
-			return True
+		if re.findall('fixMisencoded-' + reference_genome + '=FALSE\n', line): return True
+		elif re.findall('fixMisencoded-' + reference_genome + '=TRUE\n', line): return True
 
 	return False
 
 # main program
 # reads the config file and get the respective values for each
 for line in open(params.fp):
-	if re.findall(r'input_dir=', line):
-		params.input_dir = line.split('=')[-1].rstrip()
-	elif re.findall(r'output_dir=', line):
-		params.output_dir = line.split('=')[-1].rstrip()
-	elif re.findall(r'qcheck_dir=', line):
-		params.qcheck_dir = line.split('=')[-1].rstrip()
+	if re.findall(r'input_dir=', line): params.input_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'output_dir=', line): params.output_dir = line.split('=')[-1].rstrip()
+	elif re.findall(r'qcheck_dir=', line): params.qcheck_dir = line.split('=')[-1].rstrip()
 
 # create a directory for the output of quality check/control
-#os.makedirs(params.output_dir + "/output_qcheck/")
-params.output_dir = os.path.join(params.output_dir, "output_qcheck")
+if not os.path.exists(params.output_dir + "/output_check/"):
+	os.makedirs(params.output_dir + "/output_check/")
 
-#subprocess.Popen('module load jdk', shell=True, stdout=PIPE).communicate()
+params.output_dir = os.path.join(params.output_dir, "output_check")
 
 # reads the file containing the genome
 for pair in open(input_file):
@@ -50,12 +42,13 @@ for pair in open(input_file):
 		line = p.readline().rstrip()
 		if not line: break
 
+		if not re.findall(r'fastq+\.+gz$', line): continue
+
 		# path for the fastqc and fastq.gz files
 		# run the fastqc and store the outputs
 		fastqc = os.path.join(params.qcheck_dir, "fastqc")
 		fq_file = os.path.join(params.input_dir, genome)
 
-		subprocess.Popen("module load fastqc/0.11.5")
 		os.system("chmod 755 " + params.qcheck_dir + "/./fastqc")
 		os.system(fastqc + " -o " + params.output_dir  + " " + fq_file + "/" + line)
 
@@ -64,18 +57,23 @@ for pair in open(input_file):
 		# FOR READING ZIP FILES
 
 		# reading the zipfile
-		with zipfile.ZipFile(params.output_dir + '/' + line) as z:
+		with contextlib.closing(zipfile.ZipFile(params.output_dir + '/' + line)) as z:
 			# list all the files
 			for filename in z.namelist():
 
 				# check the fastqc_data.txt
 				# determine the encoding used and set fixMisencoded if needed
 				if re.findall(r'fastqc_data', filename):
-					with z.open(filename) as f:
+					with contextlib.closing(z.open(filename)) as f:
 						for encoding in f:
 							if re.findall(r'(Sanger | Illumina 1+\.+8+\+)', encoding):
 								fixMisencoded = 1
 								break
+				elif re.findall(r'summary', filename):
+					with contextlib.closing(z.open(filename)) as f:
+						for data in f:
+							with open("statistics.txt", "a") as fp:
+								fp.write(data)
 
 
 		# FOR FIXMISENCODED
@@ -90,10 +88,8 @@ for pair in open(input_file):
 			for i, line in enumerate(data):
 				if line.startswith("[MISENCODED EQUALS]"):
 					if not checkIfExists(ref_genome):
-						if fixMisencoded == 0:
-							data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=TRUE\n'
-						else:
-							data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=FALSE\n'
+						if fixMisencoded == 0: data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=TRUE\n'
+						else: data[i] = data[i] + 'fixMisencoded-' + ref_genome + '=FALSE\n'
 						break
 
 		# and write everything back

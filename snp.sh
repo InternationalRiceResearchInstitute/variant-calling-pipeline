@@ -16,16 +16,16 @@ do
 	IFS=':' read -ra info <<< "$line" #split, get each genome
 	for pair in `ls $input_dir/$info`
 		do
-			if [[ $pair == *"1.fastq.gz"* ]]
+			if [[ $pair == *"1.fastq.gz" ]]
 			then
   				pair2="$input_dir/$info/${pair/1.fastq.gz/2.fastq.gz}"
-			elif [[ $pair == *"1.fq.gz"* ]]
+			elif [[ $pair == *"1.fq.gz" ]]
 			then
   				pair2="$input_dir/$info/${pair/1.fq.gz/2.fq.gz}"
-			elif [[ $pair == *"2.fastq.gz"* ]]
+			elif [[ $pair == *"2.fastq.gz" ]]
 			then
 				pair2="$input_dir/$info/${pair/2.fastq.gz/1.fastq.gz}"
-			elif [[ $pair == *"2.fq.gz"* ]]
+			elif [[ $pair == *"2.fq.gz" ]]
 			then
 				pair2="$input_dir/$info/${pair/2.fq.gz/1.fq.gz}"
 			fi 
