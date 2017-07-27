@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
 import sys, re, os, os.path
-from classes import CreateControlQualitySlurm
+from classes import CreateControlQualityParams
 
 # get the genome file
 input_file = sys.argv[1]
 disk = sys.argv[2]
 
 # get the parameters in the class CreateControlQualitySlurm
-params = CreateControlQualitySlurm()
+params = CreateControlQualityParams()
 
 # reads the config file and get the respective values for each
 for line in open(params.fp):
 	if re.findall(r'email=', line): params.email = line.split('=')[-1].rstrip()
 	elif re.findall(r'sleep=', line): params.sleep = line.split('=')[-1].rstrip()
+	elif re.findall(r'fastqc=', line): params.fastqc = line.split('=')[-1].rstrip()
 	elif re.findall(r'partition=', line): params.partition = line.split('=')[-1].rstrip()
-	elif re.findall(r'cpu_fastqc=', line): params.cpu_fastqc = line.split('=')[-1].rstrip()
+	elif re.findall(r'cpu_fastq=', line): params.cpu_fastq = line.split('=')[-1].rstrip()
 	elif re.findall(r'input_dir=', line): params.input_dir = line.split('=')[-1].rstrip()
 	elif re.findall(r'output_dir=', line): params.output_dir = line.split('=')[-1].rstrip()
 	elif re.findall(r'scripts_dir=', line): params.scripts_dir = line.split('=')[-1].rstrip()
@@ -30,10 +31,11 @@ for line in open(input_file):
 	# create a directory for each genome
 	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
 	os.makedirs(params.output_dir + "/" + genome)
+	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 	
 	# directory where slurm script will store
 	path = params.analysis_dir + "/" + disk + "/"
-	slurm_file = "submit_slurm.sh"
+	slurm_file = "submit_fastqc_slurm.sh"
 	exec_file = os.path.join(path, slurm_file)
 
 	output_path = params.analysis_dir + "/" + disk + "/" + genome + "/"
@@ -45,7 +47,7 @@ for line in open(input_file):
 	script = open(exec_file, "w")
 	script.write("#!/bin/bash\n")
 	script.write("\n")
-	script.write("sbatch " + output_file  + "\n")
+	script.write("sbatch " + output_file + "\n")
 	script.write("sleep " + params.sleep + "\n")
 	script.close()
 
@@ -56,7 +58,7 @@ for line in open(input_file):
 
 	fastqc.write("#SBATCH -J " + genome + "-fastqc\n")
 	fastqc.write("#SBATCH -o " + genome + "-fastqc.%j.out\n")
-	fastqc.write("#SBATCH -c " + params.cpu_fastqc + "\n")
+	fastqc.write("#SBATCH -c " + params.cpu_fastq + "\n")
 	fastqc.write("#SBATCH --array=1-" + str(count) + "\n")
 	fastqc.write("#SBATCH --partition=" + params.partition + "\n")
 	fastqc.write("#SBATCH -e " + genome + "-fastqc.%j.error\n")
@@ -73,5 +75,6 @@ for line in open(input_file):
 
 	# get the first pair of a fastq file and assign for use
 	fastqc.write("python " + params.scripts_dir + "/fastqc.py -i " + params.input_dir + " -o " + params.output_dir + " -g " + genome)
+	fastqc.write("mv " + genome + "-fastqc.*.error " + genome + "-fastqc.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 
 	fastqc.close()

@@ -54,7 +54,8 @@ def main(argv):
                 output_dir + '/' + \
                 genome + ' ' + \
                 input_dir + '/' + \
-                genome
+                genome + '/' + \
+                line
 
         #execute command
         os.system(unzip)
@@ -79,13 +80,13 @@ def main(argv):
                 elif re.findall(r'summary', filename):
                     with contextlib.closing(z.open(filename)) as f:
                         for data in f:
-                            with open("statistics.txt", "a") as fp:
-                                fp.write(data)
+                            with open("summary.txt", "a") as files:
+                                files.write(data)
 
 
         # FOR FIXMISENCODED
 
-        ref_genome = re.split('1.fastq|2.fastq', line)[0]
+        ref_genome = re.split('_1.fastq|_2.fastq', line)[0]
 
         # read a list of lines into data
         with open(fp, 'r') as file:

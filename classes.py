@@ -31,6 +31,18 @@ class CreateQualityParams():
     qcheck_dir = ''
     fp = 'config'
 
+class CreateControlQualityParams():
+    email = ''
+    sleep = ''
+    fastqc = ''
+    partition = ''
+    cpu_fastq = ''
+    input_dir = ''
+    output_dir = ''
+    scripts_dir = ''
+    analysis_dir = ''
+    fp = 'config'
+
 class CreateBAMProcessingParams():
     jvm = ''
     gatk = ''
