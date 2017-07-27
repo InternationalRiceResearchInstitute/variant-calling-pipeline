@@ -72,6 +72,7 @@ def main(argv):
             vcf = bam.replace('realign.bam', 'vcf')
             break
 
+    # checks if the bam statistics returns success
     with open(bam_txt) as fp:
         for line in fp:
             if re.findall(r'SUCCESS', line):
@@ -96,6 +97,7 @@ def main(argv):
             else:
                 exist = 0
 
+    # if bam file is invalid
     if exist == 0:
         with open("bam_log.txt", "w") as f:
             f.write("Bam of is invalid")

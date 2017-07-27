@@ -8,11 +8,14 @@ The SNP discovery pipeline is used to detect variants including SNPs and indels 
   
   3) Variant calling: Variants are called using the GATK Unified Genotyper – GATK 3.2-2 https://www.broadinstitute.org/gatk/ 
 
+  4) FastQC (v.0.11.5): A simple tool that provides an overview of raw data sequence - https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+     Note in FastQC: if the program failed to export results, the module has an error. Therefore, you need to download the tool.
+
 The pipeline is intended to work on High-Performance Computing (HPC) clusters that has SLURM as a job scheduler. However, the individual python scripts can also be used for specific steps independently. 
 
 1. Clone repository on your working directory. 
 2. Modify config file accordingly. The config file contains parameters for the directories, software and user information required to run the pipeline. 
-3. Run createInput.sh to create input.info file which contains information for the genomes/lines and the number of fastq files for each genome. 
+3. Run createInput.py to create input.info file which contains information for the genomes/lines and the number of fastq files for each genome. 
 4. Run snp.sh to submit jobs that will run the pipeline. 
 5. Run log.sh to check for error report. 
 

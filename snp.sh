@@ -24,7 +24,7 @@ do
   				pair2="$input_dir/$info/${pair/1.fq.gz/2.fq.gz}"
 			elif [[ $pair == *"2.fastq.gz" ]]
 			then
-				#pair2="$input_dir/$info/${pair/2.fastq.gz/1.fastq.gz}"
+				pair2="$input_dir/$info/${pair/2.fastq.gz/1.fastq.gz}"
 			elif [[ $pair == *"2.fq.gz" ]]
 			then
 				pair2="$input_dir/$info/${pair/2.fq.gz/1.fq.gz}"
@@ -43,17 +43,19 @@ then
 fi
 
 ## works to the fastqc module
-./createControlQualitySlurm.py $filename $disk
+## works in ASTI but not in BIGAS
 
-while read -r line			#read each line to get the genomes
-do
-	IFS=':' read -ra info <<< "$line" #split, get each genome
-	job=`ls $analysis_dir/$disk/$info/*fastqc.* `
+#./createControlQualitySlurm.py $filename $disk
+
+#while read -r line			#read each line to get the genomes
+#do
+#	IFS=':' read -ra info <<< "$line" #split, get each genome
+#	job=`ls $analysis_dir/$disk/$info/*fastqc.* `
 
 	#submit *fastqc. to the job scheduler
-	sbatch $job
-done < "$filename"
-sleep 3m
+#	sbatch $job
+#done < "$filename"
+#sleep 3m
 
 ##
 

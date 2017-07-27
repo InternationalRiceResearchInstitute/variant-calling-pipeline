@@ -29,15 +29,19 @@ def main(argv):
         elif opt in ("-g", "--gene"):
             raw_dir = arg
 
+    # read the file
     for line in open(input_file):
-        line = line.split(":")
+        line = line.split(":")    # split the line in to two
         genome = line[0]
         count = line[1]
 
-        if raw_dir == genome:
+        if raw_dir == genome:     # checks the genome
             if int(count) > 2:
+
+                # checks if the mergef.bam file exists
                 mergebam = raw_dir + ".merged.bam"
                 if not os.path.exists(output_dir + '/' + raw_dir + '/' + mergebam):
+                    # merge multiple bam files into single bam file
                     merge = 'samtools merge ' + \
                             output_dir + '/' + \
                             raw_dir + '/' + \
@@ -48,7 +52,9 @@ def main(argv):
 
                     os.system(merge)
 
+                # checks if the merged.bam.bai exists
                 if not os.path.exists(output_dir + '/' + raw_dir + '/' + mergebam + '.bai'):
+                    # creates merged.bam.bai
                     index = 'samtools index ' + \
                             output_dir + '/' + \
                             raw_dir + '/' + \
@@ -56,6 +62,7 @@ def main(argv):
 
                     os.system(index)
 
+                # delete unnecessary files
                 lists = 'rm ' + \
                         output_dir + '/' + \
                         raw_dir + '/' + \

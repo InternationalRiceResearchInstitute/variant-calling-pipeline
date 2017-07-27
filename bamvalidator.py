@@ -30,6 +30,8 @@ def main(argv):
 
     bam = bam.rstrip('\n')
 
+    # checks what kind of bam file is in the ouput folder
+    # merged or realign bam
     p = os.popen('ls ' + bam, "r")
     while 1:
         genome = p.readline().rstrip()
@@ -37,12 +39,12 @@ def main(argv):
 
         if re.findall(r'(merged+\.+bam)', genome):
             bam = bam + genome
-            print bam
             break
         elif re.findall(r'(realign+\.+bam)', genome):
             bam = bam +  genome
             break
 
+    # splits the path into three
     split_dir = re.search(r'(.*)/(.*)/(.*bam)', bam, re.M)
     if split_dir:
         input_dir = split_dir.group(1)
@@ -51,6 +53,7 @@ def main(argv):
     else:
         print "Nothing found!"
 
+    # write bam statistics in the file
     bam_out = bamfile.replace('bam', 'txt')
     with open(output_dir + '/' + bam_out, 'w') as out:
         subprocess.call(['bam', 'validate', '--in', bam, '--verbose'], stdout=out, stderr=subprocess.STDOUT)

@@ -54,9 +54,12 @@ def main(argv):
         elif opt in ("-t", "--temp"):
             temp_dir = arg
 
+    # get the filename in the path
     genome = os.path.basename(sam)
     genome = sam.replace(".sam", "")
 
+    # check if its fixMisencoded is false
+    # else add fixMisencoded
     for line in open(fp):
         if re.findall(r'fixMisencoded-' + genome, line):
             fixMisencoded = line.split('=')[-1].rstrip()

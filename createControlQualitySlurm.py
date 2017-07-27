@@ -75,6 +75,5 @@ for line in open(input_file):
 
 	# get the first pair of a fastq file and assign for use
 	fastqc.write("python " + params.scripts_dir + "/fastqc.py -i " + params.input_dir + " -o " + params.output_dir + " -g " + genome)
-	fastqc.write("mv " + genome + "-fastqc.*.error " + genome + "-fastqc.*.out " + params.analysis_dir + "/" + disk + "/" + genome + "/logs")
 
 	fastqc.close()
