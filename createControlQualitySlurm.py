@@ -26,7 +26,7 @@ for line in open(params.fp):
 for line in open(input_file):
 	line = line.split(":")
 	genome = line[0]
-	count = line[1]
+	count = '1'
 
 	# create a directory for each genome
 	os.makedirs(params.analysis_dir + "/" + disk + "/" + genome)
