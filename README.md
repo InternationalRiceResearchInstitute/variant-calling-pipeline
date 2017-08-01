@@ -19,4 +19,4 @@ The pipeline is intended to work on High-Performance Computing (HPC) clusters th
 4. Run snp.sh to submit jobs that will run the pipeline. 
 5. Run log.sh to check for error report. 
 
-To see the specific commands, go to https://github.com/IRRI-Bioinformatics/variant-calling-pipeline/wiki/How-to-run-the-pipeline.
+To see the specific commands, go to https://github.com/InternationalRiceResearchInstitute/variant-calling-pipeline/wiki/How-to-run-the-pipeline.
